@@ -1,15 +1,18 @@
 <?php
 
-
+require_once __DIR__.'/src/MarketplaceWebServiceProducts/Client.php';
+require_once __DIR__.'/src/FBAInventoryServiceMWS/Client.php';
+require_once __DIR__.'/src/MarketplaceWebServiceOrders/Client.php';
+require_once __DIR__.'/src/MarketplaceWebService/Client.php';
 class MwsClient
 {
     public $type;
     public function __construct($config,$type='feed'){
-        $a = 2;
+        $type = 'product';
         switch($type) {
             case 'inventory':
-                require_once __DIR__.'/src/FBAInventoryServiceMWS/Client.php';
-                $this->client = new \FBAInventoryServiceMWS_Client(
+
+                $client = new \FBAInventoryServiceMWS_Client(
                     $config['aws_access_id'],
                     $config['aws_access_secret'],
                     $config['config'],
@@ -18,9 +21,9 @@ class MwsClient
                 );
                 break;
 
-            case 'orders':
-                require_once __DIR__.'/src/MarketplaceWebServiceOrders/Client.php';
-                $this->client = new \MarketplaceWebServiceOrders_Client(
+            case 'order':
+
+                $client = new \MarketplaceWebServiceOrders_Client(
                     $config['aws_access_id'],
                     $config['aws_access_secret'],
                     $config['config'],
@@ -30,18 +33,18 @@ class MwsClient
                 break;
 
             case 'product':
-                require_once __DIR__.'/src/MarketplaceWebServiceProducts/Client.php';
-                $this->client = new \MarketplaceWebServiceProducts_Client(
+
+                $client = new \MarketplaceWebServiceProducts_Client(
                     $config['aws_access_id'],
                     $config['aws_access_secret'],
-                    $config['config'],
                     $config['app_name'],
-                    $config['app_version']
+                    $config['app_version'],
+                    $config['config']
                 );
                 break;
             default:
-                require_once __DIR__.'/src/MarketplaceWebService/Client.php';
-                $this->client = new \MarketplaceWebService_Client(
+
+                $client = new \MarketplaceWebService_Client(
                     $config['aws_access_id'],
                     $config['aws_access_secret'],
                     $config['config'],
@@ -50,7 +53,11 @@ class MwsClient
                 );
                 break;
         }
+        if (is_object($client)){
+            $this->client = $client;
+        }
 
     }
 }
+
 
