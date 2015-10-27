@@ -8,10 +8,9 @@ class MwsClient
 {
     public $type;
     public function __construct($config,$type='feed'){
-        $type = 'product';
+
         switch($type) {
             case 'inventory':
-
                 $client = new \FBAInventoryServiceMWS_Client(
                     $config['aws_access_id'],
                     $config['aws_access_secret'],
@@ -22,7 +21,6 @@ class MwsClient
                 break;
 
             case 'order':
-
                 $client = new \MarketplaceWebServiceOrders_Client(
                     $config['aws_access_id'],
                     $config['aws_access_secret'],
@@ -33,7 +31,6 @@ class MwsClient
                 break;
 
             case 'product':
-
                 $client = new \MarketplaceWebServiceProducts_Client(
                     $config['aws_access_id'],
                     $config['aws_access_secret'],
@@ -59,5 +56,6 @@ class MwsClient
 
     }
 }
+
 
 
