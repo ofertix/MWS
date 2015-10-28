@@ -12,7 +12,7 @@ class MwsClient
                 $client = new \FBAInventoryServiceMWS_Client(
                     $config['aws_access_id'],
                     $config['aws_access_secret'],
-                    $config['config'],
+                    array('ServiceURL' => "https://mws-eu.amazonservices.com/FulfillmentInventory/2010-10-01"),
                     $config['app_name'],
                     $config['app_version']
                 );
@@ -22,10 +22,11 @@ class MwsClient
                 $client = new \MarketplaceWebServiceOrders_Client(
                     $config['aws_access_id'],
                     $config['aws_access_secret'],
-                    $config['config'],
                     $config['app_name'],
-                    $config['app_version']
+                    $config['app_version'],
+                    array('ServiceURL' => "https://mws-eu.amazonservices.com/Orders/2013-09-01")
                 );
+
                 break;
 
             case 'product':
@@ -53,6 +54,7 @@ class MwsClient
     }
 
 }
+
 
 
 
