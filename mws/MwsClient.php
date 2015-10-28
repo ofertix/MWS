@@ -6,9 +6,7 @@ require_once __DIR__.'/src/MarketplaceWebServiceOrders/Client.php';
 require_once __DIR__.'/src/MarketplaceWebService/Client.php';
 class MwsClient
 {
-    public $type;
-    public function __construct($config,$type='feed'){
-
+    public static function getClient($config,$type='feed'){
         switch($type) {
             case 'inventory':
                 $client = new \FBAInventoryServiceMWS_Client(
@@ -36,26 +34,26 @@ class MwsClient
                     $config['aws_access_secret'],
                     $config['app_name'],
                     $config['app_version'],
-                    $config['config']
+                    array('ServiceURL' => "https://mws-eu.amazonservices.com/Products/2011-10-01")
                 );
                 break;
             default:
-
                 $client = new \MarketplaceWebService_Client(
                     $config['aws_access_id'],
                     $config['aws_access_secret'],
-                    $config['config'],
+                    array('ServiceURL' => "https://mws.amazonservices.es"),
                     $config['app_name'],
                     $config['app_version']
                 );
                 break;
         }
         if (is_object($client)){
-            $this->client = $client;
+            return $client;
         }
-
     }
+
 }
+
 
 
 
