@@ -6,9 +6,21 @@ require_once __DIR__.'/src/MarketplaceWebServiceOrders/Client.php';
 require_once __DIR__.'/src/MarketplaceWebService/Client.php';
 class MwsClient
 {
+    const FEED_AND_REPORT = 0;
+    const PRODUCTS = 1;
+    const ORDERS = 2;
+    const FBA_INVENTORY = 3;
+
+    private static $clients = array(
+        self::FEED_AND_REPORT => 'feed',
+        self::PRODUCTS => 'product',
+        self::ORDERS => 'order',
+        self::FBA_INVENTORY =>'inventory');
+
     public static function getClient($config,$type='feed'){
+
         switch($type) {
-            case 'inventory':
+            case  self::FBA_INVENTORY:
                 $client = new \FBAInventoryServiceMWS_Client(
                     $config['aws_access_id'],
                     $config['aws_access_secret'],
@@ -18,7 +30,7 @@ class MwsClient
                 );
                 break;
 
-            case 'order':
+            case self::ORDERS:
                 $client = new \MarketplaceWebServiceOrders_Client(
                     $config['aws_access_id'],
                     $config['aws_access_secret'],
@@ -29,7 +41,7 @@ class MwsClient
 
                 break;
 
-            case 'product':
+            case  self::PRODUCTS:
                 $client = new \MarketplaceWebServiceProducts_Client(
                     $config['aws_access_id'],
                     $config['aws_access_secret'],
@@ -38,6 +50,7 @@ class MwsClient
                     array('ServiceURL' => "https://mws-eu.amazonservices.com/Products/2011-10-01")
                 );
                 break;
+            case self::FEED_AND_REPORT:
             default:
                 $client = new \MarketplaceWebService_Client(
                     $config['aws_access_id'],
