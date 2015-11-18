@@ -4,6 +4,7 @@ require_once __DIR__.'/src/MarketplaceWebServiceProducts/Client.php';
 require_once __DIR__.'/src/FBAInventoryServiceMWS/Client.php';
 require_once __DIR__.'/src/MarketplaceWebServiceOrders/Client.php';
 require_once __DIR__.'/src/MarketplaceWebService/Client.php';
+
 class MwsClient
 {
     const FEED_AND_REPORT = 0;
@@ -17,10 +18,22 @@ class MwsClient
         self::ORDERS => 'order',
         self::FBA_INVENTORY =>'inventory');
 
+
+    private static function isValidClient($type)
+    {
+        if (!in_array($type, self::$clients) ) {
+            return false;
+        }
+        return true;
+    }
+
     public static function getClient($config,$type='feed'){
 
+        if (!self::isValidClient($type)) {
+            return false;
+        }
         switch($type) {
-            case  self::FBA_INVENTORY:
+            case  self::$clients[self::FBA_INVENTORY]:
                 $client = new \FBAInventoryServiceMWS_Client(
                     $config['aws_access_id'],
                     $config['aws_access_secret'],
@@ -30,7 +43,7 @@ class MwsClient
                 );
                 break;
 
-            case self::ORDERS:
+            case  self::$clients[self::ORDERS]:
                 $client = new \MarketplaceWebServiceOrders_Client(
                     $config['aws_access_id'],
                     $config['aws_access_secret'],
@@ -41,7 +54,7 @@ class MwsClient
 
                 break;
 
-            case  self::PRODUCTS:
+            case  self::$clients[self::PRODUCTS]:
                 $client = new \MarketplaceWebServiceProducts_Client(
                     $config['aws_access_id'],
                     $config['aws_access_secret'],
@@ -50,7 +63,7 @@ class MwsClient
                     array('ServiceURL' => "https://mws-eu.amazonservices.com/Products/2011-10-01")
                 );
                 break;
-            case self::FEED_AND_REPORT:
+            case  self::$clients[self::FEED_AND_REPORT]:
             default:
                 $client = new \MarketplaceWebService_Client(
                     $config['aws_access_id'],
@@ -67,8 +80,4 @@ class MwsClient
     }
 
 }
-
-
-
-
 
