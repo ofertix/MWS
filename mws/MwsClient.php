@@ -30,7 +30,7 @@ class MwsClient
     public static function getClient($config,$type='feed'){
 
         if (!self::isValidClient($type)) {
-            return false;
+            throw new \Exception("Amazon Client does not exist , valid clients are ". implode(",",self::$clients));
         }
         switch($type) {
             case  self::$clients[self::FBA_INVENTORY]:
@@ -76,6 +76,8 @@ class MwsClient
         }
         if (is_object($client)){
             return $client;
+        } else {
+            return false;
         }
     }
 
