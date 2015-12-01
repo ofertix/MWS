@@ -7,6 +7,7 @@ require_once __DIR__.'/src/MarketplaceWebService/Client.php';
 
 class MwsClient
 {
+    const XSD_DIR = 'xsd';
     const FEED_AND_REPORT = 0;
     const PRODUCTS = 1;
     const ORDERS = 2;
@@ -18,12 +19,39 @@ class MwsClient
         self::ORDERS => 'order',
         self::FBA_INVENTORY =>'inventory');
 
+    /**
+     * @param string $feed
+     * @param string $feedType
+     * @return bool
+     */
+    public static function validateFeed($feed, $feedType)
+    {
+        $valid = false;
+        $pathXSD = __DIR__ . DIRECTORY_SEPARATOR. self::XSD_DIR. DIRECTORY_SEPARATOR . $feedType.'.xsd';
+        if (file_exists($pathXSD)) {
+            $xmlfeed = new \DOMDocument();
+            $xmlfeed->resolveExternals = true;
+            $xmlfeed->strictErrorChecking = true;
+            $xmlfeed->preserveWhiteSpace = false;
+            $xmlfeed->formatOutput = false;
+            $xmlfeed->loadXML($feed);
+            try {
+                $valid = $xmlfeed->schemaValidate($pathXSD);
+            } catch (\Exception $ex) {
+                //throw new \Exception($ex->getMessage(), 1);
+            }
+        }
+
+        return $valid;
+    }
+
 
     private static function isValidClient($type)
     {
         if (!in_array($type, self::$clients) ) {
             return false;
         }
+
         return true;
     }
 
