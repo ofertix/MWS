@@ -206,21 +206,27 @@ HERE_DOC;
     public static function submitFeed(\DOMDocument $feed, $marketPlaceId, $client )
     {
         $request = self::getSubmitFeedRequest($feed, $marketPlaceId);
-        $response = $client->submitFeed($request);
-
-        if ($response->isSetSubmitFeedResult()) {
-            $submitFeedResult = $response->getSubmitFeedResult();
-            if ($submitFeedResult->isSetFeedSubmissionInfo()) {
-                $submInfo = $submitFeedResult->getFeedSubmissionInfo();
-
-                return $submInfo;
-            }
-        } else {
-            return $response;
+        try{
+            return $client->submitFeed($request);
+        } catch(\Exception $ec) {
+            //@todo filtering exceptions
+            return false;
         }
 
+    }
+
+    /**
+     * @param $response
+     * @return mixed
+     */
+    public static function checkValidResponseFeed($response) {
+        if ($response->isSetSubmitFeedResult()) {
+                return true;
+        }
         return false;
     }
+
+
 
     /**
      * @param SimpleXMLElement $objXMl
