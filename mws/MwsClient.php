@@ -13,6 +13,31 @@ class MwsClient
     const ORDERS = 2;
     const FBA_INVENTORY = 3;
 
+    // ****** AMAZON MWS RELATED CONSTANTS  ********
+
+    const PRODUCT_FEED = '_POST_PRODUCT_DATA_';
+    const RELATIONSHIPS_FEED = '_POST_PRODUCT_RELATIONSHIP_DATA_';
+    const SINGLE_FORMAT_ITEM_FEED = '_POST_ITEM_DATA_';
+    const SHIPPING_OVERRIDE_FEED = '_POST_PRODUCT_OVERRIDES_DATA_';
+    const PRODUCT_IMAGES_FEED = '_POST_PRODUCT_IMAGE_DATA_';
+    const PRICING_FEED = '_POST_PRODUCT_PRICING_DATA_';
+    const INVENTORY_FEED = '_POST_INVENTORY_AVAILABILITY_DATA_';
+    const ORDER_ACKNOWLEDGEMENT_FEED = '_POST_ORDER_ACKNOWLEDGEMENT_DATA_';
+    const ORDER_FULFILLMENT_FEED = '_POST_ORDER_FULFILLMENT_DATA_';
+
+    const MESSAGE_TYPE_PRODUCT = 'Product';
+    const MESSAGE_TYPE_INVENTORY = 'Inventory';
+    const MESSAGE_TYPE_PRICING = 'Price';
+    const MESSAGE_TYPE_RELATIONSHIP = 'Relationship';
+    const MESSAGE_TYPE_PRODUCT_IMAGE = 'ProductImage';
+
+    const SUBMITTED = '_SUBMITTED_';
+    const IN_PROGRESS = '_IN_PROGRESS_';
+    const CANCELLED = '_CANCELLED_';
+    const DONE = '_DONE_';
+
+
+
     private static $clients = array(
         self::FEED_AND_REPORT => 'feed',
         self::PRODUCTS => 'product',
