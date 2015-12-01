@@ -36,7 +36,12 @@ class MwsClient
     const CANCELLED = '_CANCELLED_';
     const DONE = '_DONE_';
 
+    const OPERATION_TYPE_UPDATE = 'Update';
 
+    private static $mwsXmlHeader = <<<HERE_DOC
+        <AmazonEnvelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="amzn-envelope.xsd" />
+HERE_DOC;
 
     private static $clients = array(
         self::FEED_AND_REPORT => 'feed',
@@ -68,6 +73,127 @@ class MwsClient
         }
 
         return $valid;
+    }
+
+    /**
+     * @param string     $merchantIdentifier
+     * @param string     $messageType
+     * @param bool|false $clearReplace
+     * @return SimpleXMLElement
+     */
+    public static function getMWSBaseFeed($merchantIdentifier, $messageType, $clearReplace = false)
+    {
+        $feedXml = new \SimpleXMLElement(self::$mwsXmlHeader);
+        $header = $feedXml->addChild('Header');
+        $header->addChild('DocumentVersion', '1.01');
+        $header->addChild('MerchantIdentifier', $merchantIdentifier);
+        $feedXml->addChild('MessageType', $messageType);
+        if ($clearReplace) {
+            $purgeString = ($clearReplace) ? 'true' : 'false';
+            $feedXml->addChild('PurgeAndReplace', $purgeString);
+        }
+
+        return self::simplexml2DomDoc($feedXml);
+
+    }
+
+
+    /**
+     * @param int    $messageId
+     * @param string $operationType
+     * @return SimpleXMLElement
+     */
+    public static function getMessageNode($messageId = 1, $operationType = self::OPERATION_TYPE_UPDATE)
+    {
+        $messageNodeXml = new \SimpleXMLElement('<Message/>');
+        $messageNodeXml->addChild('MessageID', $messageId);
+        $messageNodeXml->addChild('OperationType', $operationType);
+
+        return self::simplexml2DomDoc($messageNodeXml);
+    }
+
+
+    /**
+     * @param DOMDocument $feed
+     * @param string      $marketPlaceId
+     * @return MarketplaceWebService_Model_SubmitFeedRequest
+     */
+    public static function getSubmitFeedRequest(\DOMDocument $feed, $marketPlaceId)
+    {
+        file_put_contents('/tmp/mws', $feed->saveXML());
+        $feedHandle = fopen('/tmp/mws', 'r');
+        rewind($feedHandle);
+        $messageType = $feed->getElementsByTagName('MessageType')->item(0)->nodeValue;
+        $merchantID = $feed->getElementsByTagName('MerchantIdentifier')->item(0)->nodeValue;
+        $feedType = '';
+        switch ($messageType) {
+            case self::MESSAGE_TYPE_PRODUCT:
+                $feedType = self::PRODUCT_FEED;
+                break;
+            case self::MESSAGE_TYPE_PRICING:
+                $feedType = self::PRICING_FEED;
+                break;
+            case self::MESSAGE_TYPE_INVENTORY:
+                $feedType = self::INVENTORY_FEED;
+                break;
+            case self::MESSAGE_TYPE_PRODUCT_IMAGE:
+                $feedType = self::PRODUCT_IMAGES_FEED;
+                break;
+            case self::MESSAGE_TYPE_RELATIONSHIP:
+                $feedType = self::RELATIONSHIPS_FEED;
+                break;
+        }
+
+        $request = new \MarketplaceWebService_Model_SubmitFeedRequest();
+        $request->setMerchant($merchantID);
+        $request->setMarketplaceIdList(array('Id' => $marketPlaceId));
+        $request->setFeedType($feedType);
+        $request->setContentMd5(base64_encode(md5(stream_get_contents($feedHandle), true)));
+        $request->setPurgeAndReplace(false);
+        rewind($feedHandle);
+        $request->setFeedContent($feedHandle);
+
+        return $request;
+    }
+
+    /**
+     * @param DOMDocument $feed
+     * @param strting     $marketPlaceId
+     * @param \MarketplaceWebService_Interface $client
+     * @return bool|DOMDocument
+     */
+    public static function submitFeed(\DOMDocument $feed, $marketPlaceId, $client )
+    {
+        $request = self::getSubmitFeedRequest($feed, $marketPlaceId);
+        $response = $client->submitFeed($request);
+
+        if ($response->isSetSubmitFeedResult()) {
+            $submitFeedResult = $response->getSubmitFeedResult();
+            if ($submitFeedResult->isSetFeedSubmissionInfo()) {
+                $submInfo = $submitFeedResult->getFeedSubmissionInfo();
+
+                return $submInfo;
+            }
+        } else {
+            return $response;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param SimpleXMLElement $objXMl
+     * @return DOMElement|DOMNode
+     */
+    public static function simplexml2DomDoc(\SimpleXMLElement $objXMl)
+    {
+        $domXml = new \DOMDocument('1.0');
+        $domRootFeed = dom_import_simplexml($objXMl);
+        $domRootFeed = $domXml->importNode($domRootFeed, true);
+        $domRootFeed = $domXml->appendChild($domRootFeed);
+
+        return $domXml;
+
     }
 
 
