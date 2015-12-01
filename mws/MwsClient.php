@@ -5,6 +5,8 @@ require_once __DIR__.'/src/FBAInventoryServiceMWS/Client.php';
 require_once __DIR__.'/src/MarketplaceWebServiceOrders/Client.php';
 require_once __DIR__.'/src/MarketplaceWebService/Client.php';
 
+
+
 class MwsClient
 {
     const XSD_DIR = 'xsd';
@@ -74,6 +76,45 @@ HERE_DOC;
 
         return $valid;
     }
+
+
+    /**
+     * @param String $type
+     * @param array  $feedProduct
+     * @return bool|\SimpleXMLElement
+     */
+    public static function getNodeByType($type, array $feedProduct)
+    {
+        $feedBuilder = new FeedBuilder($type, $feedProduct);
+        $feed = '';
+        if (!empty($feedProduct['sku'])) {
+            switch ($type) {
+                case self::MESSAGE_TYPE_PRODUCT:
+                    $feed = $feedBuilder->getProductNode();
+                    break;
+                case self::MESSAGE_TYPE_INVENTORY:
+                    $feed =  $feedBuilder->getInventoryNode();
+                    break;
+                case self::MESSAGE_TYPE_PRICING:
+                    $feed =  $feedBuilder->getPriceNode();
+                    break;
+                case self::MESSAGE_TYPE_PRODUCT_IMAGE:
+                    $feed =  $feedBuilder->getProductImageNode();
+                    break;
+                case self::MESSAGE_TYPE_RELATIONSHIP:
+                    $feed =  $feedBuilder->getRelationshipNode();
+                    break;
+            }
+            $validated = self::validateFeed($feed->asXML(), $type);
+
+            return ($validated === true)?$feed:false;
+        }
+
+
+        return false;
+    }
+
+
 
     /**
      * @param string     $merchantIdentifier
