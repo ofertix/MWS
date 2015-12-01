@@ -188,6 +188,7 @@ HERE_DOC;
     public static function simplexml2DomDoc(\SimpleXMLElement $objXMl)
     {
         $domXml = new \DOMDocument('1.0');
+        $domXml->formatOutput = true;
         $domRootFeed = dom_import_simplexml($objXMl);
         $domRootFeed = $domXml->importNode($domRootFeed, true);
         $domRootFeed = $domXml->appendChild($domRootFeed);
