@@ -1,6 +1,6 @@
 <?php
 
-class FeedBuilder
+class MwsFeedBuilder
 {
     /** @var $rootNode \SimpleXMLElement  */
     public $rootNode;

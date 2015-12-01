@@ -85,7 +85,7 @@ HERE_DOC;
      */
     public static function getNodeByType($type, array $feedProduct)
     {
-        $feedBuilder = new FeedBuilder($type, $feedProduct);
+        $feedBuilder = new \MwsFeedBuilder($type, $feedProduct);
         $feed = '';
         if (!empty($feedProduct['sku'])) {
             switch ($type) {
