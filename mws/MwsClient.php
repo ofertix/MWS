@@ -39,6 +39,9 @@ class MwsClient
     const DONE = '_DONE_';
 
     const OPERATION_TYPE_UPDATE = 'Update';
+    const OPERATION_TYPE_DELETE = 'Delete';
+    const OPERATION_TYPE_PARTIAL_UPDATE = 'PartialUpdate';
+
 
     private static $mwsXmlHeader = <<<HERE_DOC
         <AmazonEnvelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -205,6 +208,7 @@ HERE_DOC;
      */
     public static function submitFeed(\DOMDocument $feed, $marketPlaceId, $client )
     {
+        /** @var  $request  \MarketplaceWebService_Model_SubmitFeedRequest */
         $request = self::getSubmitFeedRequest($feed, $marketPlaceId);
         try{
             return $client->submitFeed($request);

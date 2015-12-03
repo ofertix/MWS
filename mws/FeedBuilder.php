@@ -34,7 +34,7 @@ class MwsFeedBuilder
     public function getPriceNode()
     {
         $this->rootNode->addChild('SKU', $this->feedProduct['sku']);
-        $this->rootNode->addChild('StandardPrice', $this->feedProduct['price'])->addAttribute('currency', 'EUR');
+        $this->rootNode->addChild('StandardPrice', $this->feedProduct['standard_price'])->addAttribute('currency', 'EUR');
 
         return $this->rootNode;
     }
