@@ -296,7 +296,7 @@ HERE_DOC;
                 break;
             case  self::$clients[self::FEED_AND_REPORT]:
             default:
-                $client = new \MarketplaceWebService_Client(
+                $client = new \FeedClient(
                     $config['aws_access_id'],
                     $config['aws_access_secret'],
                     array('ServiceURL' => "https://mws.amazonservices.es"),
