@@ -35,7 +35,7 @@ class FeedClient extends MarketplaceWebService_Client
         $parsedHeader = $this->parseHttpHeader($header);
 
         require_once('Model/ResponseHeaderMetadata.php');
-        $responseHeaderMetadata = new MarketplaceWebService_Model_ResponseHeaderMetadata(
+        $responseHeaderMetadata = new ResponseHeaderMetadata(
             $parsedHeader['x-mws-request-id'],
             $parsedHeader['x-mws-response-context'],
             $parsedHeader['x-mws-timestamp'],

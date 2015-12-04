@@ -3,7 +3,7 @@
 require_once __DIR__.'/src/MarketplaceWebServiceProducts/Client.php';
 require_once __DIR__.'/src/FBAInventoryServiceMWS/Client.php';
 require_once __DIR__.'/src/MarketplaceWebServiceOrders/Client.php';
-require_once __DIR__.'/src/MarketplaceWebService/Client.php';
+require_once __DIR__.'/Feeds/FeedClient.php';
 
 
 

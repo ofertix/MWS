@@ -900,7 +900,7 @@ class MarketplaceWebService_Client implements MarketplaceWebService_Interface
    * @param $contentMd5 - The Content-MD5 HTTP header value used for feed submissions.
    * @return array
    */
-  private function performRequest($action, array $converted, $dataHandle = null, $contentMd5 = null) {
+  protected function performRequest($action, array $converted, $dataHandle = null, $contentMd5 = null) {
 
     $curlOptions = $this->configureCurlOptions($action, $converted, $dataHandle, $contentMd5);
 
@@ -1036,7 +1036,7 @@ class MarketplaceWebService_Client implements MarketplaceWebService_Interface
    * @param $string - header portion to write.
    * @return int - number of bytes written to stream.
    */
-  private function headerCallback($ch, $string) {
+  protected function headerCallback($ch, $string) {
     $bytesWritten = fwrite($this->headerContents, $string);
     return $bytesWritten;
   }
