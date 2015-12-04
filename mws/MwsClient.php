@@ -3,7 +3,7 @@
 require_once __DIR__.'/src/MarketplaceWebServiceProducts/Client.php';
 require_once __DIR__.'/src/FBAInventoryServiceMWS/Client.php';
 require_once __DIR__.'/src/MarketplaceWebServiceOrders/Client.php';
-require_once __DIR__.'/src/MarketplaceWebService/Client.php';
+require_once __DIR__.'/Feeds/FeedClient.php';
 
 
 
@@ -296,7 +296,7 @@ HERE_DOC;
                 break;
             case  self::$clients[self::FEED_AND_REPORT]:
             default:
-                $client = new \MarketplaceWebService_Client(
+                $client = new \FeedClient(
                     $config['aws_access_id'],
                     $config['aws_access_secret'],
                     array('ServiceURL' => "https://mws.amazonservices.es"),

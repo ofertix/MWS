@@ -20,10 +20,14 @@ class MarketplaceWebService_Model_ResponseHeaderMetadata {
   const REQUEST_ID = 'x-mws-request-id';
   const RESPONSE_CONTEXT = 'x-mws-response-context';
   const TIMESTAMP = 'x-mws-timestamp';
+  const QUOTA_MAX = 'x-mws-quota-max';
+  const QUOTA_REMAINING = 'x-mws-quota-remaining';
+  const QUOTA_RESETS_AT = 'x-mws-quota-resetsOn';
 
-  private $metadata = array();
+  protected $metadata = array();
 
-  public function __construct($requestId = null, $responseContext = null, $timestamp = null) {
+  public function __construct($requestId = null, $responseContext = null, $timestamp = null,
+                              $quotaMax = null, $quotaRemaining = null, $quotaResetsAt = null) {
     $this->metadata[self::REQUEST_ID] = $requestId;
     $this->metadata[self::RESPONSE_CONTEXT] = $responseContext;
     $this->metadata[self::TIMESTAMP] = $timestamp;
@@ -42,8 +46,5 @@ class MarketplaceWebService_Model_ResponseHeaderMetadata {
     return $this->metadata[self::TIMESTAMP];
   }
 
-  public function __toString() {
-    return "RequestId: " . $this->getRequestId() . ", ResponseContext: " . $this->getResponseContext() . ", Timestamp: " . $this->getTimestamp();
-  }
 }
 

@@ -61,11 +61,11 @@ class MarketplaceWebService_Client implements MarketplaceWebService_Interface
   private $responseBodyContents;
   
   // "streaming" responses that are errors will be send to this handle;
-  private $errorResponseBody;
+  protected $errorResponseBody;
 
-  private $headerContents;
+  protected $headerContents;
   
-  private $curlClient;
+  protected $curlClient;
 
   /**
    * Construct new Client
@@ -900,7 +900,7 @@ class MarketplaceWebService_Client implements MarketplaceWebService_Interface
    * @param $contentMd5 - The Content-MD5 HTTP header value used for feed submissions.
    * @return array
    */
-  private function performRequest($action, array $converted, $dataHandle = null, $contentMd5 = null) {
+  protected function performRequest($action, array $converted, $dataHandle = null, $contentMd5 = null) {
 
     $curlOptions = $this->configureCurlOptions($action, $converted, $dataHandle, $contentMd5);
 
@@ -952,7 +952,7 @@ class MarketplaceWebService_Client implements MarketplaceWebService_Interface
         'ResponseHeaderMetadata' => $responseHeaderMetadata);
   }
 
-  private function getParsedHeader($parsedHeader, $key) {
+  protected function getParsedHeader($parsedHeader, $key) {
     return $parsedHeader[strtolower($key)];
   }
 
@@ -965,7 +965,7 @@ class MarketplaceWebService_Client implements MarketplaceWebService_Interface
    * @param $streamHandle
    * @return unknown_type
    */
-  private function verifyContentMd5($receivedMd5Hash, $streamHandle) {
+  protected function verifyContentMd5($receivedMd5Hash, $streamHandle) {
     rewind($streamHandle);
     $expectedMd5Hash = $this->getContentMd5($streamHandle);
     rewind($streamHandle);
@@ -986,7 +986,7 @@ class MarketplaceWebService_Client implements MarketplaceWebService_Interface
    * @param $header
    * @return array
    */
-  private function parseHttpHeader($header) {
+  protected function parseHttpHeader($header) {
     $parsedHeader = array ();
     foreach (explode("\n", $header) as $line) {
       $splitLine = preg_split('/:\s/', $line, 2, PREG_SPLIT_NO_EMPTY);
@@ -1036,7 +1036,7 @@ class MarketplaceWebService_Client implements MarketplaceWebService_Interface
    * @param $string - header portion to write.
    * @return int - number of bytes written to stream.
    */
-  private function headerCallback($ch, $string) {
+  protected function headerCallback($ch, $string) {
     $bytesWritten = fwrite($this->headerContents, $string);
     return $bytesWritten;
   }
@@ -1065,7 +1065,7 @@ class MarketplaceWebService_Client implements MarketplaceWebService_Interface
    * @param $streamHandle
    * @return array
    */
-  private function configureCurlOptions($action, array $converted, $streamHandle = null, $contentMd5 = null) {
+  protected function configureCurlOptions($action, array $converted, $streamHandle = null, $contentMd5 = null) {
     $curlOptions = $this->getDefaultCurlOptions();
     
     if (!is_null($this->config['ProxyHost'])) {
@@ -1133,7 +1133,7 @@ class MarketplaceWebService_Client implements MarketplaceWebService_Interface
    * @param $header
    * @return unknown_type
    */
-  private function getDownloadResponseDocument($responseType, $header) {
+  protected function getDownloadResponseDocument($responseType, $header) {
     $md5 = $this->getParsedHeader($header, 'Content-MD5');
     $requestId = $this->getParsedHeader($header, 'x-amz-request-id');
 
