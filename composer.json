@@ -1,5 +1,5 @@
 {
-    "name": "ofertix/MWS",
+    "name": "ofertix/mws",
     "type": "library",
     "license": "Apache-2.0",
     "description": "Amazon MWS PHP SDK",
@@ -8,20 +8,31 @@
     "authors": [
         {
             "name": "juan carlos escamilla",
-            "homepage": "http://www.ofertix.com"
+            "homepage": "http://www.ofertix.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Pablo Soria Mateo",
+            "email": "pablosoria@gmail.com",
+            "role": "Developer"
         }
     ],
+    "support": {
+        "wiki": "https://github.com/ofertix/MWS/wiki",
+        "issues": "https://github.com/ofertix/MWS/issues",
+        "source": "https://github.com/ofertix/MWS"
+    },
 
     "require": {
         "php": ">=5.3.2"
     },
 
     "autoload": {
-        "classmap": [ "mws/" ]
+        "classmap": [ "lib/"],
+        "psr-4": {
+            "Ofertix\\Mws\\": "src/Mws/"
+        }
     },
 
-    "target-dir": "",
-    
-    "include-path": ["mws/src/"]
+    "include-path": ["lib/"]
 }
-

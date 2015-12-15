@@ -1,6 +1,8 @@
 <?php
 
-class MwsFeedBuilder
+namespace Ofertix\Mws;
+
+class FeedBuilder
 {
     /** @var $rootNode \SimpleXMLElement  */
     public $rootNode;

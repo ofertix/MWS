@@ -1,11 +1,6 @@
 <?php
 
-require_once __DIR__.'/src/MarketplaceWebServiceProducts/Client.php';
-require_once __DIR__.'/src/FBAInventoryServiceMWS/Client.php';
-require_once __DIR__.'/src/MarketplaceWebServiceOrders/Client.php';
-require_once __DIR__.'/Feeds/FeedClient.php';
-
-
+namespace Ofertix\Mws;
 
 class MwsClient
 {
@@ -62,7 +57,9 @@ HERE_DOC;
     public static function validateFeed($feed, $feedType)
     {
         $valid = false;
-        $pathXSD = __DIR__ . DIRECTORY_SEPARATOR. self::XSD_DIR. DIRECTORY_SEPARATOR . $feedType.'.xsd';
+        $pathXSD = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.
+                    DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.self::XSD_DIR.
+                    DIRECTORY_SEPARATOR.$feedType.'.xsd';
         if (file_exists($pathXSD)) {
             $xmlfeed = new \DOMDocument();
             $xmlfeed->resolveExternals = true;
@@ -88,7 +85,7 @@ HERE_DOC;
      */
     public static function getNodeByType($type, array $feedProduct)
     {
-        $feedBuilder = new \MwsFeedBuilder($type, $feedProduct);
+        $feedBuilder = new FeedBuilder($type, $feedProduct);
         $feed = '';
         if (!empty($feedProduct['sku'])) {
             switch ($type) {
@@ -113,7 +110,6 @@ HERE_DOC;
             return ($validated === true)?$feed:false;
         }
 
-
         return false;
     }
 
@@ -123,7 +119,7 @@ HERE_DOC;
      * @param string     $merchantIdentifier
      * @param string     $messageType
      * @param bool|false $clearReplace
-     * @return SimpleXMLElement
+     * @return \SimpleXMLElement
      */
     public static function getMWSBaseFeed($merchantIdentifier, $messageType, $clearReplace = false)
     {
@@ -145,7 +141,7 @@ HERE_DOC;
     /**
      * @param int    $messageId
      * @param string $operationType
-     * @return SimpleXMLElement
+     * @return \SimpleXMLElement
      */
     public static function getMessageNode($messageId = 1, $operationType = self::OPERATION_TYPE_UPDATE)
     {
@@ -158,9 +154,9 @@ HERE_DOC;
 
 
     /**
-     * @param DOMDocument $feed
+     * @param \DOMDocument $feed
      * @param string      $marketPlaceId
-     * @return MarketplaceWebService_Model_SubmitFeedRequest
+     * @return \MarketplaceWebService_Model_SubmitFeedRequest
      */
     public static function getSubmitFeedRequest(\DOMDocument $feed, $marketPlaceId)
     {
@@ -201,10 +197,10 @@ HERE_DOC;
     }
 
     /**
-     * @param DOMDocument $feed
+     * @param \DOMDocument $feed
      * @param strting     $marketPlaceId
      * @param \MarketplaceWebService_Interface $client
-     * @return bool|DOMDocument
+     * @return bool|\DOMDocument
      */
     public static function submitFeed(\DOMDocument $feed, $marketPlaceId, $client )
     {
@@ -233,8 +229,8 @@ HERE_DOC;
 
 
     /**
-     * @param SimpleXMLElement $objXMl
-     * @return DOMElement|DOMNode
+     * @param \SimpleXMLElement $objXMl
+     * @return \DOMElement|\DOMNode
      */
     public static function simplexml2DomDoc(\SimpleXMLElement $objXMl)
     {
