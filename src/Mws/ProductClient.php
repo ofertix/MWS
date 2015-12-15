@@ -11,15 +11,18 @@ class ProductClient
 
     private $config;
     private $client;
+    private $class;
 
     /**
      * @param array $config
+     *
      * @throws \Exception
      */
     public function __construct(array $config)
     {
         $this->config = $config;
         $this->client = MwsClient::getClient($this->config, 'product');
+        $this->class = $config['amazon_product_class'];
     }
 
     /**
@@ -73,7 +76,7 @@ class ProductClient
                     $size = $attributes->{'Size'}->__toString();
                     $model = $attributes->{'Model'}->__toString();
                     $title = $attributes->{'Title'}->__toString();
-                    $prod = new AmazonProduct($ean, $asin, $brand, $model, $title);
+                    $prod = new $this->class($ean, $asin, $brand, $model, $title);
                     $prod->setColor($color)
                         ->setSize($size)
                         ->setUrl($url)
