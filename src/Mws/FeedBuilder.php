@@ -2,21 +2,22 @@
 
 namespace Ofertix\Mws;
 
+use Ofertix\Mws\Model\AmazonProduct;
+
 class FeedBuilder
 {
     /** @var $rootNode \SimpleXMLElement  */
     public $rootNode;
-    public $feedProduct;
+    public $amazonProduct;
 
     /**
-     * FeedBuilder constructor.
-     * @param string $rootNodeName
-     * @param array  $feedProduct
+     * @param $rootNodeName
+     * @param AmazonProduct $amazonProduct
      */
-    public function __construct($rootNodeName, array $feedProduct)
+    public function __construct($rootNodeName, AmazonProduct $amazonProduct)
     {
         $this->rootNode = new \SimpleXMLElement('<'.$rootNodeName.'></'.$rootNodeName.'>');
-        $this->feedProduct = $feedProduct;
+        $this->amazonProduct = $amazonProduct;
     }
 
     /**
@@ -24,8 +25,8 @@ class FeedBuilder
      */
     public function getInventoryNode()
     {
-        $this->rootNode->addChild('SKU', $this->feedProduct['sku']);
-        $this->rootNode->addChild('Quantity', $this->feedProduct['quantity']);
+        $this->rootNode->addChild('SKU', $this->amazonProduct->sku());
+        $this->rootNode->addChild('Quantity', $this->amazonProduct->stock());
 
         return $this->rootNode;
     }
@@ -35,8 +36,9 @@ class FeedBuilder
      */
     public function getPriceNode()
     {
-        $this->rootNode->addChild('SKU', $this->feedProduct['sku']);
-        $this->rootNode->addChild('StandardPrice', $this->feedProduct['standard_price'])->addAttribute('currency', 'EUR');
+        $this->rootNode->addChild('SKU', $this->amazonProduct->sku());
+        $this->rootNode->addChild('StandardPrice', $this->amazonProduct->price())
+                        ->addAttribute('currency', $this->amazonProduct->currency());
 
         return $this->rootNode;
     }
@@ -46,15 +48,15 @@ class FeedBuilder
      */
     public function getRelationshipNode()
     {
-        $this->rootNode->addChild('SKU', $this->feedProduct['sku']);
-        $this->rootNode->addChild('ParentSKU', $this->feedProduct['parent_sku']);
-        foreach ($this->feedProduct['relation'] as $relatedSku) {
-            $relationNode = $this->rootNode->addChild('Relation');
-            $relationNode->addChild('SKU', $relatedSku);
-            $relationNode->addChild('Type', 'Variation');
-        }
-
-        return $this->rootNode;
+        $this->rootNode->addChild('SKU', $this->amazonProduct->sku());
+        $this->rootNode->addChild('ParentSKU', $this->amazonProduct->parentSku());
+//        foreach ($this->amazonProduct['relation'] as $relatedSku) {
+//            $relationNode = $this->rootNode->addChild('Relation');
+//            $relationNode->addChild('SKU', $relatedSku);
+//            $relationNode->addChild('Type', 'Variation');
+//        }
+//
+//        return $this->rootNode;
     }
 
     /**
@@ -62,9 +64,9 @@ class FeedBuilder
      */
     public function getProductImageNode()
     {
-        $this->rootNode->addChild('SKU', $this->feedProduct['sku']);
-        $this->rootNode->addChild('ImageType', $this->feedProduct['image_type']);
-        $this->rootNode->addChild('ImageLocation', $this->feedProduct['image_location']);
+        $this->rootNode->addChild('SKU', $this->amazonProduct->sku());
+        $this->rootNode->addChild('ImageType', $this->amazonProduct['image_type']);
+        $this->rootNode->addChild('ImageLocation', $this->amazonProduct['image_location']);
 
         return $this->rootNode;
     }
@@ -75,28 +77,28 @@ class FeedBuilder
     public function getProductNode()
     {
 
-        $this->rootNode->addChild('SKU', $this->feedProduct['sku']);
+        $this->rootNode->addChild('SKU', $this->amazonProduct->sku());
         $pid = $this->rootNode->addChild('StandardProductID');
             $pid->addChild('Type', 'EAN');
-            $pid->addChild('Value', $this->feedProduct['ean']);
-        if (isset($this->feedProduct['launch_date'])) {
-            $this->rootNode->addChild('LaunchDate', $this->feedProduct['launch_date']);
+            $pid->addChild('Value', $this->amazonProduct->ean13());
+        if (null !== $this->amazonProduct->launchDate()) {
+            $this->rootNode->addChild('LaunchDate', $this->amazonProduct->launchDate());
         }
         $conditionNode = $this->rootNode->addChild('Condition');
             $conditionNode->addChild('ConditionType', 'New');
         $descNode = $this->rootNode->addChild('DescriptionData');
-            $descNode->addChild('Title', $this->feedProduct['title']);
-            $descNode->addChild('Brand', $this->feedProduct['brand']);
-            $descNode->addChild('Description', $this->feedProduct['description']);
-        if (isset($this->feedProduct['search_terms'])) {
-            foreach ($this->feedProduct['search_terms'] as $searchTerm) {
-                $descNode->addChild('SearchTerms', $searchTerm);
-            }
-        }
+            $descNode->addChild('Title', $this->amazonProduct->title());
+            $descNode->addChild('Brand', $this->amazonProduct->brand());
+            $descNode->addChild('Description', $this->amazonProduct->description());
+//        if (isset($this->amazonProduct['search_terms'])) {
+//            foreach ($this->amazonProduct['search_terms'] as $searchTerm) {
+//                $descNode->addChild('SearchTerms', $searchTerm);
+//            }
+//        }
         $descNode->addChild('ItemType', 'flat-sheets');
-        if (isset($this->feedProduct['recommended_browse_node'])) {
-            $descNode->addChild('RecommendedBrowseNode', $this->feedProduct['recommended_browse_node']);
-        }
+//        if (isset($this->amazonProduct['recommended_browse_node'])) {
+//            $descNode->addChild('RecommendedBrowseNode', $this->amazonProduct['recommended_browse_node']);
+//        }
 
         return $this->rootNode;
     }

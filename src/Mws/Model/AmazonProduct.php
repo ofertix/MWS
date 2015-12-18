@@ -4,38 +4,49 @@ namespace Ofertix\Mws\Model;
 
 /**
  * Class AmazonProduct
+ *
+ * @package Ofertix\Mws\Model
  */
-class AmazonProduct
+class AmazonProduct implements UploadableProductInterface
 {
     protected $id;
     protected $ean13;
+    /** @var  Asin */
     protected $asin;
+    protected $sku;
+    protected $brand;
     protected $title;
+    protected $model;
     protected $color;
     protected $size;
-    protected $brand;
-    protected $model;
     protected $url;
-    protected $price;
     protected $productGroup;
     protected $productType;
-    protected $attributeId;
+    protected $stock;
+    protected $salePrice;
+    protected $costPrice;
+    protected $description;
+    protected $moreInfo;
+    protected $currency;
+    protected $parentSku;
+    protected $launchDate;
+    /**
+     * @var Image[]
+     */
+    protected $images;
 
     /**
      * AmazonProduct constructor.
      * @param Ean13 $ean13
-     * @param Asin  $asin
      * @param string  $brand
-     * @param string  $model
      * @param string  $title
      */
-    public function __construct(Ean13 $ean13, Asin $asin, $brand, $model, $title)
+    public function __construct(Ean13 $ean13, $brand, $title)
     {
         $this->ean13 = $ean13;
-        $this->asin = $asin;
         $this->brand = $brand;
-        $this->model = $model;
         $this->title = $title;
+        $this->images = array();
     }
 
     /**
@@ -97,7 +108,7 @@ class AmazonProduct
      *
      * @return AmazonProduct
      */
-    public function setAsin($asin)
+    public function setAsin(Asin $asin)
     {
         $this->asin = $asin;
 
@@ -105,89 +116,23 @@ class AmazonProduct
     }
 
     /**
-     * Get Title
-     *
-     * @return string
-     */
-    public function title()
-    {
-        return $this->title;
-    }
-
-    /**
-     * @param string $title
-     *
-     * @return AmazonProduct
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
-    /**
-     * Get Color
+     * Get Sku
      *
      * @return mixed
      */
-    public function color()
+    public function sku()
     {
-        return $this->color;
+        return $this->sku;
     }
 
     /**
-     * @param mixed $color
+     * @param mixed $sku
      *
      * @return AmazonProduct
      */
-    public function setColor($color)
+    public function setSku($sku)
     {
-        $this->color = $color;
-
-        return $this;
-    }
-
-    /**
-     * Get ProductType
-     *
-     * @return mixed
-     */
-    public function productType()
-    {
-        return $this->productType;
-    }
-
-    /**
-     * @param mixed $productType
-     *
-     * @return AmazonProduct
-     */
-    public function setProductType($productType)
-    {
-        $this->productType = $productType;
-
-        return $this;
-    }
-
-    /**
-     * Get Size
-     *
-     * @return mixed
-     */
-    public function size()
-    {
-        return $this->size;
-    }
-
-    /**
-     * @param mixed $size
-     *
-     * @return AmazonProduct
-     */
-    public function setSize($size)
-    {
-        $this->size = $size;
+        $this->sku = $sku;
 
         return $this;
     }
@@ -215,6 +160,28 @@ class AmazonProduct
     }
 
     /**
+     * Get Title
+     *
+     * @return string
+     */
+    public function title()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     *
+     * @return AmazonProduct
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    /**
      * Get Model
      *
      * @return string
@@ -232,6 +199,50 @@ class AmazonProduct
     public function setModel($model)
     {
         $this->model = $model;
+
+        return $this;
+    }
+
+    /**
+     * Get Color
+     *
+     * @return mixed
+     */
+    public function color()
+    {
+        return $this->color;
+    }
+
+    /**
+     * @param mixed $color
+     *
+     * @return AmazonProduct
+     */
+    public function setColor($color)
+    {
+        $this->color = $color;
+
+        return $this;
+    }
+
+    /**
+     * Get Size
+     *
+     * @return mixed
+     */
+    public function size()
+    {
+        return $this->size;
+    }
+
+    /**
+     * @param mixed $size
+     *
+     * @return AmazonProduct
+     */
+    public function setSize($size)
+    {
+        $this->size = $size;
 
         return $this;
     }
@@ -259,28 +270,6 @@ class AmazonProduct
     }
 
     /**
-     * Get Price
-     *
-     * @return mixed
-     */
-    public function price()
-    {
-        return $this->price;
-    }
-
-    /**
-     * @param mixed $price
-     *
-     * @return AmazonProduct
-     */
-    public function setPrice($price)
-    {
-        $this->price = $price;
-
-        return $this;
-    }
-
-    /**
      * Get ProductGroup
      *
      * @return mixed
@@ -303,23 +292,221 @@ class AmazonProduct
     }
 
     /**
-     * Get AttributeId
+     * Get ProductType
      *
-     * @return int
+     * @return mixed
      */
-    public function attributeId()
+    public function productType()
     {
-        return $this->attributeId;
+        return $this->productType;
     }
 
     /**
-     * @param $attributeId
+     * @param mixed $productType
+     *
+     * @return AmazonProduct
+     */
+    public function setProductType($productType)
+    {
+        $this->productType = $productType;
+
+        return $this;
+    }
+
+    /**
+     * Get Stock
+     *
+     * @return mixed
+     */
+    public function stock()
+    {
+        return $this->stock;
+    }
+
+    /**
+     * @param mixed $stock
+     *
+     * @return AmazonProduct
+     */
+    public function setStock($stock)
+    {
+        $this->stock = $stock;
+
+        return $this;
+    }
+
+    /**
+     * Get SalePrice
+     *
+     * @return mixed
+     */
+    public function salePrice()
+    {
+        return $this->salePrice;
+    }
+
+    /**
+     * @param mixed $salePrice
+     *
+     * @return AmazonProduct
+     */
+    public function setSalePrice($salePrice)
+    {
+        $this->salePrice = $salePrice;
+
+        return $this;
+    }
+
+    /**
+     * Get CostPrice
+     *
+     * @return mixed
+     */
+    public function costPrice()
+    {
+        return $this->costPrice;
+    }
+
+    /**
+     * @param mixed $costPrice
+     *
+     * @return AmazonProduct
+     */
+    public function setCostPrice($costPrice)
+    {
+        $this->costPrice = $costPrice;
+
+        return $this;
+    }
+
+    /**
+     * Get Description
+     *
+     * @return mixed
+     */
+    public function description()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param mixed $description
+     *
+     * @return AmazonProduct
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get MoreInfo
+     *
+     * @return mixed
+     */
+    public function moreInfo()
+    {
+        return $this->moreInfo;
+    }
+
+    /**
+     * @param mixed $moreInfo
+     *
+     * @return AmazonProduct
+     */
+    public function setMoreInfo($moreInfo)
+    {
+        $this->moreInfo = $moreInfo;
+
+        return $this;
+    }
+
+    /**
+     * Get Images
+     *
+     * @return array
+     */
+    public function images()
+    {
+        return $this->images;
+    }
+
+    /**
+     * @param Image $image
      *
      * @return $this
      */
-    public function setAttributeId($attributeId)
+    public function addImage(Image $image)
     {
-        $this->attributeId = $attributeId;
+        $this->images[] = $image;
+
+        return $this;
+    }
+
+    /**
+     * Get Currency
+     *
+     * @return mixed
+     */
+    public function currency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @param mixed $currency
+     *
+     * @return AmazonProduct
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+
+        return $this;
+    }
+
+    /**
+     * Get ParentSku
+     *
+     * @return mixed
+     */
+    public function parentSku()
+    {
+        return $this->parentSku;
+    }
+
+    /**
+     * @param mixed $parentSku
+     *
+     * @return AmazonProduct
+     */
+    public function setParentSku($parentSku)
+    {
+        $this->parentSku = $parentSku;
+
+        return $this;
+    }
+
+    /**
+     * Get LaunchDate
+     *
+     * @return mixed
+     */
+    public function launchDate()
+    {
+        return $this->launchDate;
+    }
+
+    /**
+     * @param mixed $launchDate
+     *
+     * @return AmazonProduct
+     */
+    public function setLaunchDate($launchDate)
+    {
+        $this->launchDate = $launchDate;
 
         return $this;
     }

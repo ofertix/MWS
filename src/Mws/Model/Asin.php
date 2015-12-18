@@ -7,7 +7,7 @@ class Asin
     protected $asin;
 
     /**
-     * AsinVO constructor.
+     * Asin constructor.
      * @param string $asin
      */
     public function __construct($asin)
