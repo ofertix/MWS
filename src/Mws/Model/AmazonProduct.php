@@ -7,9 +7,13 @@ namespace Ofertix\Mws\Model;
  *
  * @package Ofertix\Mws\Model
  */
-class AmazonProduct implements UploadableProductInterface
+class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterface
 {
+
+    const FEED_TYPE_PRODUCT = 'Product';
+
     protected $id;
+    /** @var Ean13  */
     protected $ean13;
     /** @var  Asin */
     protected $asin;
@@ -49,6 +53,43 @@ class AmazonProduct implements UploadableProductInterface
         $this->images = array();
     }
 
+    public function feedType()
+    {
+        return self::FEED_TYPE_PRODUCT;
+    }
+
+    /**
+     * @return \SimpleXMLElement|String
+     */
+    public function xmlNode()
+    {
+        $rootNode = new \SimpleXMLElement('<'.$this->feedType().'></'.$this->feedType().'>');
+        $rootNode->addChild('SKU', $this->sku());
+        $pid = $rootNode->addChild('StandardProductID');
+        $pid->addChild('Type', 'EAN');
+        $pid->addChild('Value', $this->ean13());
+        if (null !== $this->launchDate()) {
+            $rootNode->addChild('LaunchDate', $this->launchDate());
+        }
+        $conditionNode = $rootNode->addChild('Condition');
+        $conditionNode->addChild('ConditionType', 'New');
+        $descNode = $rootNode->addChild('DescriptionData');
+        $descNode->addChild('Title', $this->title());
+        $descNode->addChild('Brand', $this->brand());
+        $descNode->addChild('Description', $this->description());
+        //        if (isset($this->amazonProduct['search_terms'])) {
+        //            foreach ($this->amazonProduct['search_terms'] as $searchTerm) {
+        //                $descNode->addChild('SearchTerms', $searchTerm);
+        //            }
+        //        }
+        $descNode->addChild('ItemType', 'flat-sheets');
+        //        if (isset($this->amazonProduct['recommended_browse_node'])) {
+        //            $descNode->addChild('RecommendedBrowseNode', $this->amazonProduct['recommended_browse_node']);
+        //        }
+
+        return $rootNode;
+
+    }
     /**
      * Get Id
      *

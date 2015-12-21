@@ -2,6 +2,7 @@
 
 namespace Ofertix\Mws;
 
+use Ofertix\Mws\Model\AmazonFeedTypeInterface;
 use Ofertix\Mws\Model\AmazonProduct;
 use Ofertix\Mws\Model\AmazonRequest;
 
@@ -38,7 +39,7 @@ class FeedClient
     }
 
     /**
-     * @param AmazonProduct $amazonProducts For maximum performance count($amazonProducts) < 12000
+     * @param AmazonProduct[] $amazonProducts For maximum performance count($amazonProducts) < 12000
      * @param string $marketPlaceId
      *
      * @return AmazonRequest
@@ -56,7 +57,7 @@ class FeedClient
         }
 
         /** @var \DOMDocument $xmlFeed */
-        $xmlFeed = $this->createXmlFeed($amazonProducts,self::FEED_TYPE_PRODUCT);
+        $xmlFeed = $this->createXmlFeed($amazonProducts);
 
         /** @var  \MarketplaceWebService_Model_SubmitFeedResponse $response */
         $response = $this->submitFeed($xmlFeed, $marketPlaceId);
@@ -68,25 +69,62 @@ class FeedClient
         return $amazonRequest;
     }
 
+
+//        public function updateProductImages($amazonProductImages, $marketPlaceId = 'default')
+//        {
+//
+//            $marketPlaceId = $marketPlaceId === 'default' ? $this->config['marketplace_id'] : $marketPlaceId;
+//
+//            foreach ($amazonProductImages as $amazonProductImage) {
+//                if ($amazonProductImage instanceof $this->productClass) {
+//                    continue;
+//                }
+//                throw new \Exception('ProductImage must be or extend \Ofertix\Mws\Model\AmazonProductImage');
+//            }
+//
+//            /** @var \DOMDocument $xmlFeed */
+//            $xmlFeed = $this->createXmlFeed($amazonProductImages,self::FEED_TYPE_PRODUCT_IMAGE);
+//
+//
+//
+//            foreach ($ofertixProductVO->images() as $key => $image) {
+//
+//                $imageType = ($key == 0) ? 'Main' : 'PT'.$key;
+//
+//                $legacyProductParaJC[] = array('sku' => $ofertixProductVO->sku(),
+//                    'image_type' => $imageType,
+//                    'image_location' => $image->url()
+//                );
+//            }
+//
+//            $result = $this->updateByFeedType(MwsClient::MESSAGE_TYPE_PRODUCT_IMAGE, $legacyProductParaJC);
+//
+//            /** @var  $response \MarketplaceWebService_Model_SubmitFeedResponse */
+//            $response = $result[0];
+//            $xml = $result[1];
+//            $this->getRequestData($response, $xml);
+//            $this->handleThrottling($response);
+//        }
+
     /**
-     * @param $amazonProducts
-     * @param $feedType
+     * @param AmazonFeedTypeInterface[] $feedTypeObjects
      * @param bool|false $clear
      * @param string $operationType
      *
      * @return \DOMDocument
      */
-    private function createXmlFeed($amazonProducts, $feedType, $clear = false , $operationType = self::OPERATION_TYPE_UPDATE)
+    private function createXmlFeed($feedTypeObjects, $clear = false , $operationType = self::OPERATION_TYPE_UPDATE)
     {
         $messageId=1;
 
         /** @var \DOMDocument $baseFeed */
-        $baseFeed = $this->getMWSBaseFeed($feedType, $clear);
-        foreach ($amazonProducts as $amazonProduct) {
+        $baseFeed = $this->getMWSBaseFeed($feedTypeObjects[0], $clear);
 
+        /** @var AmazonFeedTypeInterface $feedTypeObject */
+        foreach ($feedTypeObjects as $feedTypeObject) {
             try {
                 /** @var \SimpleXMLElement $feed */
-                $feed = $this->getNodeByType($feedType, $amazonProduct);
+                $feed = $feedTypeObject->xmlNode();
             } catch (\Exception $e) {
                 echo 'Caught exception: ',  $e->getMessage(), "\n";
                 continue;
@@ -108,13 +146,14 @@ class FeedClient
     }
 
     /**
-     * @param $messageType
+     * @param AmazonFeedTypeInterface $feedType
      * @param bool|false $clearReplace
      *
      * @return \DOMDocument
      */
-    private function getMWSBaseFeed($messageType, $clearReplace = false)
+    private function getMWSBaseFeed(AmazonFeedTypeInterface $feedType, $clearReplace = false)
     {
+        $messageType = $feedType->feedType();
         $mwsXmlHeader = <<<HERE_DOC
         <AmazonEnvelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="amzn-envelope.xsd" />

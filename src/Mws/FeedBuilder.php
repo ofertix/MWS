@@ -71,37 +71,4 @@ class FeedBuilder
         return $this->rootNode;
     }
 
-    /**
-     * @return \SimpleXMLElement|String
-     */
-    public function getProductNode()
-    {
-
-        $this->rootNode->addChild('SKU', $this->amazonProduct->sku());
-        $pid = $this->rootNode->addChild('StandardProductID');
-            $pid->addChild('Type', 'EAN');
-            $pid->addChild('Value', $this->amazonProduct->ean13());
-        if (null !== $this->amazonProduct->launchDate()) {
-            $this->rootNode->addChild('LaunchDate', $this->amazonProduct->launchDate());
-        }
-        $conditionNode = $this->rootNode->addChild('Condition');
-            $conditionNode->addChild('ConditionType', 'New');
-        $descNode = $this->rootNode->addChild('DescriptionData');
-            $descNode->addChild('Title', $this->amazonProduct->title());
-            $descNode->addChild('Brand', $this->amazonProduct->brand());
-            $descNode->addChild('Description', $this->amazonProduct->description());
-//        if (isset($this->amazonProduct['search_terms'])) {
-//            foreach ($this->amazonProduct['search_terms'] as $searchTerm) {
-//                $descNode->addChild('SearchTerms', $searchTerm);
-//            }
-//        }
-        $descNode->addChild('ItemType', 'flat-sheets');
-//        if (isset($this->amazonProduct['recommended_browse_node'])) {
-//            $descNode->addChild('RecommendedBrowseNode', $this->amazonProduct['recommended_browse_node']);
-//        }
-
-        return $this->rootNode;
-    }
-
-
 }
