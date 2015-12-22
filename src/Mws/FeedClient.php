@@ -3,23 +3,18 @@
 namespace Ofertix\Mws;
 
 use Ofertix\Mws\Model\AmazonFeedTypeInterface;
+use Ofertix\Mws\Model\AmazonPrice;
 use Ofertix\Mws\Model\AmazonProduct;
+use Ofertix\Mws\Model\AmazonProductImage;
 use Ofertix\Mws\Model\AmazonRequest;
+use Ofertix\Mws\Model\AmazonStock;
 
 class FeedClient
 {
     const XSD_DIR = 'xsd';
-    const FEED_TYPE_PRODUCT = 'Product';
-    const FEED_TYPE_INVENTORY = 'Inventory';
-    const FEED_TYPE_PRICING = 'Price';
-    const FEED_TYPE_RELATIONSHIP = 'Relationship';
-    const FEED_TYPE_PRODUCT_IMAGE = 'ProductImage';
 
-    const PRODUCT_FEED = '_POST_PRODUCT_DATA_';
-    const INVENTORY_FEED = '_POST_INVENTORY_AVAILABILITY_DATA_';
-    const PRICING_FEED = '_POST_PRODUCT_PRICING_DATA_';
+    const FEED_TYPE_RELATIONSHIP = 'Relationship';
     const RELATIONSHIPS_FEED = '_POST_PRODUCT_RELATIONSHIP_DATA_';
-    const PRODUCT_IMAGES_FEED = '_POST_PRODUCT_IMAGE_DATA_';
 
     const OPERATION_TYPE_UPDATE = 'Update';
     const OPERATION_TYPE_DELETE = 'Delete';
@@ -36,6 +31,10 @@ class FeedClient
         $this->client = MwsClient::getClient($config, 'feed');
         $this->requestClass = isset($config['amazon_request_class']) ? $config['amazon_request_class'] :'\Ofertix\Mws\Model\AmazonRequest';
         $this->productClass = isset($config['amazon_product_class']) ? $config['amazon_product_class'] :'\Ofertix\Mws\Model\AmazonProduct';
+        $this->imageClass = isset($config['amazon_image_class']) ? $config['amazon_image_class'] :'\Ofertix\Mws\Model\AmazonProductImage';
+        $this->stockClass = isset($config['amazon_stock_class']) ? $config['amazon_stock_class'] :'\Ofertix\Mws\Model\AmazonStock';
+        $this->priceClass = isset($config['amazon_price_class']) ? $config['amazon_price_class'] :'\Ofertix\Mws\Model\AmazonPrice';
+
     }
 
     /**
@@ -60,7 +59,39 @@ class FeedClient
         $xmlFeed = $this->createXmlFeed($amazonProducts);
 
         /** @var  \MarketplaceWebService_Model_SubmitFeedResponse $response */
-        $response = $this->submitFeed($xmlFeed, $marketPlaceId);
+        $response = $this->submitFeed($xmlFeed, $marketPlaceId, $amazonProduct);
+
+        $this->handleThrottling($response);
+        /** @var AmazonRequest $amazonRequest */
+        $amazonRequest = $this->getRequestData($response, $xmlFeed);
+
+        return $amazonRequest;
+    }
+
+    /**
+     * @param AmazonProductImage[] $amazonProductImages For maximum performance count($amazonProducts) < 12000
+     * @param string $marketPlaceId
+     *
+     * @return AmazonRequest
+     * @throws \Exception
+     */
+    public function updateImages($amazonProductImages, $marketPlaceId = 'default')
+    {
+
+        $marketPlaceId = $marketPlaceId === 'default' ? $this->config['marketplace_id'] : $marketPlaceId;
+
+        foreach ($amazonProductImages as $amazonProductImage) {
+            if ($amazonProductImage instanceof $this->imageClass) {
+                continue;
+            }
+            throw new \Exception('ProductImage must be or extend \Ofertix\Mws\Model\AmazonProductImage');
+        }
+
+        /** @var \DOMDocument $xmlFeed */
+        $xmlFeed = $this->createXmlFeed($amazonProductImages);
+
+        /** @var  \MarketplaceWebService_Model_SubmitFeedResponse $response */
+        $response = $this->submitFeed($xmlFeed, $marketPlaceId, $amazonProductImage);
 
         $this->handleThrottling($response);
         /** @var AmazonRequest $amazonRequest */
@@ -70,42 +101,70 @@ class FeedClient
     }
 
 
-//        public function updateProductImages($amazonProductImages, $marketPlaceId = 'default')
-//        {
-//
-//            $marketPlaceId = $marketPlaceId === 'default' ? $this->config['marketplace_id'] : $marketPlaceId;
-//
-//            foreach ($amazonProductImages as $amazonProductImage) {
-//                if ($amazonProductImage instanceof $this->productClass) {
-//                    continue;
-//                }
-//                throw new \Exception('ProductImage must be or extend \Ofertix\Mws\Model\AmazonProductImage');
-//            }
-//
-//            /** @var \DOMDocument $xmlFeed */
-//            $xmlFeed = $this->createXmlFeed($amazonProductImages,self::FEED_TYPE_PRODUCT_IMAGE);
-//
-//
-//
-//            foreach ($ofertixProductVO->images() as $key => $image) {
-//
-//                $imageType = ($key == 0) ? 'Main' : 'PT'.$key;
-//
-//                $legacyProductParaJC[] = array('sku' => $ofertixProductVO->sku(),
-//                    'image_type' => $imageType,
-//                    'image_location' => $image->url()
-//                );
-//            }
-//
-//            $result = $this->updateByFeedType(MwsClient::MESSAGE_TYPE_PRODUCT_IMAGE, $legacyProductParaJC);
-//
-//            /** @var  $response \MarketplaceWebService_Model_SubmitFeedResponse */
-//            $response = $result[0];
-//            $xml = $result[1];
-//            $this->getRequestData($response, $xml);
-//            $this->handleThrottling($response);
-//        }
+    /**
+     * @param AmazonStock[] $amazonStocks For maximum performance count($amazonProducts) < 12000
+     * @param string $marketPlaceId
+     *
+     * @return AmazonRequest
+     * @throws \Exception
+     */
+    public function updateStock($amazonStocks, $marketPlaceId = 'default')
+    {
 
+        $marketPlaceId = $marketPlaceId === 'default' ? $this->config['marketplace_id'] : $marketPlaceId;
+
+        foreach ($amazonStocks as $amazonStock) {
+            if ($amazonStock instanceof $this->stockClass) {
+                continue;
+            }
+            throw new \Exception('ProductImage must be or extend \Ofertix\Mws\Model\AmazonStock');
+        }
+
+        /** @var \DOMDocument $xmlFeed */
+        $xmlFeed = $this->createXmlFeed($amazonStocks);
+
+        /** @var  \MarketplaceWebService_Model_SubmitFeedResponse $response */
+        $response = $this->submitFeed($xmlFeed, $marketPlaceId, $amazonStock);
+
+        $this->handleThrottling($response);
+        /** @var AmazonRequest $amazonRequest */
+        $amazonRequest = $this->getRequestData($response, $xmlFeed);
+
+        return $amazonRequest;
+    }
+
+
+    /**
+     * @param AmazonPrice[] $amazonPrices For maximum performance count($amazonProducts) < 12000
+     * @param string $marketPlaceId
+     *
+     * @return AmazonRequest
+     * @throws \Exception
+     */
+    public function updatePrice($amazonPrices, $marketPlaceId = 'default')
+    {
+
+        $marketPlaceId = $marketPlaceId === 'default' ? $this->config['marketplace_id'] : $marketPlaceId;
+
+        foreach ($amazonPrices as $amazonPrice) {
+            if ($amazonPrice instanceof $this->priceClass) {
+                continue;
+            }
+            throw new \Exception('ProductImage must be or extend \Ofertix\Mws\Model\AmazonPrice');
+        }
+
+        /** @var \DOMDocument $xmlFeed */
+        $xmlFeed = $this->createXmlFeed($amazonPrices);
+
+        /** @var  \MarketplaceWebService_Model_SubmitFeedResponse $response */
+        $response = $this->submitFeed($xmlFeed, $marketPlaceId, $amazonPrice);
+
+        $this->handleThrottling($response);
+        /** @var AmazonRequest $amazonRequest */
+        $amazonRequest = $this->getRequestData($response, $xmlFeed);
+
+        return $amazonRequest;
+    }
     /**
      * @param AmazonFeedTypeInterface[] $feedTypeObjects
      * @param bool|false $clear
@@ -116,15 +175,21 @@ class FeedClient
     private function createXmlFeed($feedTypeObjects, $clear = false , $operationType = self::OPERATION_TYPE_UPDATE)
     {
         $messageId=1;
+        $feedName = $feedTypeObjects[0]->feedName();
 
         /** @var \DOMDocument $baseFeed */
-        $baseFeed = $this->getMWSBaseFeed($feedTypeObjects[0], $clear);
+        $baseFeed = $this->getMWSBaseFeed($feedName, $clear);
 
         /** @var AmazonFeedTypeInterface $feedTypeObject */
         foreach ($feedTypeObjects as $feedTypeObject) {
             try {
                 /** @var \SimpleXMLElement $feed */
                 $feed = $feedTypeObject->xmlNode();
+
+                if (!self::validateFeed($feed->asXML(), $feedName)) {
+                    throw new \Exception('Xml is not valid!');
+                }
+
             } catch (\Exception $e) {
                 echo 'Caught exception: ',  $e->getMessage(), "\n";
                 continue;
@@ -146,14 +211,13 @@ class FeedClient
     }
 
     /**
-     * @param AmazonFeedTypeInterface $feedType
+     * @param $feedType
      * @param bool|false $clearReplace
      *
      * @return \DOMDocument
      */
-    private function getMWSBaseFeed(AmazonFeedTypeInterface $feedType, $clearReplace = false)
+    private function getMWSBaseFeed($feedType, $clearReplace = false)
     {
-        $messageType = $feedType->feedType();
         $mwsXmlHeader = <<<HERE_DOC
         <AmazonEnvelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="amzn-envelope.xsd" />
@@ -163,7 +227,7 @@ HERE_DOC;
         $header = $feedXml->addChild('Header');
         $header->addChild('DocumentVersion', '1.01');
         $header->addChild('MerchantIdentifier', $this->config['merchant_id']);
-        $feedXml->addChild('MessageType', $messageType);
+        $feedXml->addChild('MessageType', $feedType);
         if ($clearReplace) {
             $purgeString = ($clearReplace) ? 'true' : 'false';
             $feedXml->addChild('PurgeAndReplace', $purgeString);
@@ -189,56 +253,17 @@ HERE_DOC;
     }
 
     /**
-     * @param $feedType
-     * @param AmazonProduct $amazonProduct
-     *
-     * @return \SimpleXMLElement|String
-     * @throws \Exception
-     */
-    private function getNodeByType($feedType, AmazonProduct $amazonProduct)
-    {
-        $feedBuilder = new FeedBuilder($feedType, $amazonProduct);
-        $feed = '';
-        if (!empty($amazonProduct->sku())) {
-            switch ($feedType) {
-                case self::FEED_TYPE_PRODUCT:
-                    $feed = $feedBuilder->getProductNode();
-                    break;
-                case self::FEED_TYPE_INVENTORY:
-                    $feed =  $feedBuilder->getInventoryNode();
-                    break;
-                case self::FEED_TYPE_PRICING:
-                    $feed =  $feedBuilder->getPriceNode();
-                    break;
-                case self::FEED_TYPE_PRODUCT_IMAGE:
-                    $feed =  $feedBuilder->getProductImageNode();
-                    break;
-                case self::FEED_TYPE_RELATIONSHIP:
-                    $feed =  $feedBuilder->getRelationshipNode();
-                    break;
-            }
-            $validated = self::validateFeed($feed->asXML(), $feedType);
-
-            if ($validated === true) {
-                return $feed;
-            }
-            throw new \Exception('Xml is not valid!');
-        }
-        throw new \Exception('SKU is a mandatory field!');
-    }
-
-    /**
      * @param $feed
-     * @param $feedType
+     * @param $feedName
      *
      * @return bool
      */
-    private function validateFeed($feed, $feedType)
+    private function validateFeed($feed, $feedName)
     {
         $valid = false;
         $pathXSD = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.
             DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.self::XSD_DIR.
-            DIRECTORY_SEPARATOR.$feedType.'.xsd';
+            DIRECTORY_SEPARATOR.$feedName.'.xsd';
         if (file_exists($pathXSD)) {
             $xmlfeed = new \DOMDocument();
             $xmlfeed->resolveExternals = true;
@@ -270,15 +295,16 @@ HERE_DOC;
     /**
      * @param \DOMDocument $feed
      * @param string $marketPlaceId
+     * @param AmazonFeedTypeInterface $feedType
      *
      * @return \MarketplaceWebService_Model_SubmitFeedResponse
      */
-    private function submitFeed(\DOMDocument $feed, $marketPlaceId = 'default')
+    private function submitFeed(\DOMDocument $feed, $marketPlaceId = 'default', AmazonFeedTypeInterface $feedType)
     {
         $marketPlaceId = $marketPlaceId === 'default' ? $this->config['marketplace_id'] : $marketPlaceId;
 
         /** @var  $request  \MarketplaceWebService_Model_SubmitFeedRequest */
-        $request = self::getSubmitFeedRequest($feed, $marketPlaceId);
+        $request = self::getSubmitFeedRequest($feed, $marketPlaceId, $feedType->feedType());
 
         try{
             $response = $this->client->submitFeed($request);
@@ -295,34 +321,16 @@ HERE_DOC;
     /**
      * @param \DOMDocument $feed
      * @param $marketPlaceId
+     * @param $feedType
      *
      * @return \MarketplaceWebService_Model_SubmitFeedRequest
      */
-    private function getSubmitFeedRequest(\DOMDocument $feed, $marketPlaceId)
+    private function getSubmitFeedRequest(\DOMDocument $feed, $marketPlaceId, $feedType)
     {
         file_put_contents('/tmp/mws', $feed->saveXML());
         $feedHandle = fopen('/tmp/mws', 'r');
         rewind($feedHandle);
-        $messageType = $feed->getElementsByTagName('MessageType')->item(0)->nodeValue;
-        $merchantID = $feed->getElementsByTagName('MerchantIdentifier')->item(0)->nodeValue;
-        $feedType = '';
-        switch ($messageType) {
-            case self::FEED_TYPE_PRODUCT:
-                $feedType = self::PRODUCT_FEED;
-                break;
-            case self::FEED_TYPE_PRICING:
-                $feedType = self::PRICING_FEED;
-                break;
-            case self::FEED_TYPE_INVENTORY:
-                $feedType = self::INVENTORY_FEED;
-                break;
-            case self::FEED_TYPE_PRODUCT_IMAGE:
-                $feedType = self::PRODUCT_IMAGES_FEED;
-                break;
-            case self::FEED_TYPE_RELATIONSHIP:
-                $feedType = self::RELATIONSHIPS_FEED;
-                break;
-        }
+        $merchantID = $this->config['merchant_id'];
 
         $request = new \MarketplaceWebService_Model_SubmitFeedRequest();
         $request->setMerchant($merchantID);
@@ -372,13 +380,6 @@ HERE_DOC;
     }
 
 
-
-//
-//
-//
-//
-//
-//
 //
 //
 //    /**
@@ -408,76 +409,17 @@ HERE_DOC;
 //        $this->getRequestData($response, $xml);
 //        $this->handleThrottling($response);
 //    }
-//
-//    /**
-//     * @param UploadableProductInterface $ofertixProductVO
-//     */
-//    public function updateStock(UploadableProductInterface $ofertixProductVO)
-//    {
-//        $legacyProductParaJC = array('sku' => $ofertixProductVO->sku(),
-//            'quantity' => $ofertixProductVO->stock()
-//        );
-//
-//        $result = $this->updateByFeedType(MwsClient::MESSAGE_TYPE_INVENTORY, array($legacyProductParaJC));
-//
-//        /** @var  $response \MarketplaceWebService_Model_SubmitFeedResponse */
-//        $response = $result[0];
-//        $xml = $result[1];
-//        $this->getRequestData($response, $xml);
-//        $this->handleThrottling($response);
-//    }
-//
-//    /**
-//     * @param UploadableProductInterface $ofertixProductVO
-//     */
-//    public function updatePrice(UploadableProductInterface $ofertixProductVO)
-//    {
-//        $legacyProductParaJC = array('sku' => $ofertixProductVO->sku(),
-//            'standard_price' => $ofertixProductVO->price()
-//        );
-//
-//        $result = $this->updateByFeedType(MwsClient::MESSAGE_TYPE_PRICING, array($legacyProductParaJC));
-//
-//        /** @var  $response \MarketplaceWebService_Model_SubmitFeedResponse */
-//        $response = $result[0];
-//        $xml = $result[1];
-//        $this->getRequestData($response, $xml);
-//        $this->handleThrottling($response);
-//    }
-//
-//    /**
-//     * @param UploadableProductInterface $ofertixProductVO
-//     */
-//    public function updateProductImages(UploadableProductInterface $ofertixProductVO)
-//    {
-//        foreach ($ofertixProductVO->images() as $key => $image) {
-//
-//            $imageType = ($key == 0) ? 'Main' : 'PT'.$key;
-//
-//            $legacyProductParaJC[] = array('sku' => $ofertixProductVO->sku(),
-//                'image_type' => $imageType,
-//                'image_location' => $image->url()
-//            );
-//        }
-//
-//        $result = $this->updateByFeedType(MwsClient::MESSAGE_TYPE_PRODUCT_IMAGE, $legacyProductParaJC);
-//
-//        /** @var  $response \MarketplaceWebService_Model_SubmitFeedResponse */
-//        $response = $result[0];
-//        $xml = $result[1];
-//        $this->getRequestData($response, $xml);
-//        $this->handleThrottling($response);
-//    }
-//
-//    public function updateOverrideShippingRates()
-//    {
-//
-//    }
-//
-//    public function reviewProcessingResults()
-//    {
-//
-//    }
+
+
+    public function updateOverrideShippingRates()
+    {
+
+    }
+
+    public function reviewProcessingResults()
+    {
+
+    }
 
     /**
      * @param \MarketplaceWebService_Model_SubmitFeedResponse $response

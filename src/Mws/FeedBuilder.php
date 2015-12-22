@@ -20,28 +20,6 @@ class FeedBuilder
         $this->amazonProduct = $amazonProduct;
     }
 
-    /**
-     * @return \SimpleXMLElement|String
-     */
-    public function getInventoryNode()
-    {
-        $this->rootNode->addChild('SKU', $this->amazonProduct->sku());
-        $this->rootNode->addChild('Quantity', $this->amazonProduct->stock());
-
-        return $this->rootNode;
-    }
-
-    /**
-     * @return \SimpleXMLElement|String
-     */
-    public function getPriceNode()
-    {
-        $this->rootNode->addChild('SKU', $this->amazonProduct->sku());
-        $this->rootNode->addChild('StandardPrice', $this->amazonProduct->price())
-                        ->addAttribute('currency', $this->amazonProduct->currency());
-
-        return $this->rootNode;
-    }
 
     /**
      * @return \SimpleXMLElement|String
@@ -57,18 +35,6 @@ class FeedBuilder
 //        }
 //
 //        return $this->rootNode;
-    }
-
-    /**
-     * @return \SimpleXMLElement|String
-     */
-    public function getProductImageNode()
-    {
-        $this->rootNode->addChild('SKU', $this->amazonProduct->sku());
-        $this->rootNode->addChild('ImageType', $this->amazonProduct['image_type']);
-        $this->rootNode->addChild('ImageLocation', $this->amazonProduct['image_location']);
-
-        return $this->rootNode;
     }
 
 }

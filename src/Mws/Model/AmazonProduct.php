@@ -10,7 +10,8 @@ namespace Ofertix\Mws\Model;
 class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterface
 {
 
-    const FEED_TYPE_PRODUCT = 'Product';
+    const FEED_NAME = 'Product';
+    const FEED_TYPE = '_POST_PRODUCT_DATA_';
 
     protected $id;
     /** @var Ean13  */
@@ -53,9 +54,14 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
         $this->images = array();
     }
 
+    public function feedName()
+    {
+        return self::FEED_NAME;
+    }
+
     public function feedType()
     {
-        return self::FEED_TYPE_PRODUCT;
+        return self::FEED_TYPE;
     }
 
     /**
@@ -63,7 +69,7 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
      */
     public function xmlNode()
     {
-        $rootNode = new \SimpleXMLElement('<'.$this->feedType().'></'.$this->feedType().'>');
+        $rootNode = new \SimpleXMLElement('<'.$this->feedName().'></'.$this->feedName().'>');
         $rootNode->addChild('SKU', $this->sku());
         $pid = $rootNode->addChild('StandardProductID');
         $pid->addChild('Type', 'EAN');
