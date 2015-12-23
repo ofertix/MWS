@@ -8,7 +8,7 @@ class Ean13
     protected $ean13;
 
     /**
-     * Ean13VO constructor.
+     * Ean13 constructor.
      * @param string $ean13
      */
     public function __construct($ean13)

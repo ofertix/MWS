@@ -76,12 +76,14 @@ class ProductClient
                     $size = $attributes->{'Size'}->__toString();
                     $model = $attributes->{'Model'}->__toString();
                     $title = $attributes->{'Title'}->__toString();
-                    $prod = new $this->class($ean, $asin, $brand, $model, $title);
-                    $prod->setColor($color)
+                    $prod = new $this->class($ean, $brand, $title);
+                    $prod->setAsin($asin)
+                        ->setColor($color)
                         ->setSize($size)
                         ->setUrl($url)
                         ->setProductType($productType)
-                        ->setProductGroup($productGroup);
+                        ->setProductGroup($productGroup)
+                        ->setModel($model);
 
                     return $prod;
                 } else {
