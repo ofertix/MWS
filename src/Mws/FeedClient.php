@@ -38,6 +38,34 @@ class FeedClient
     }
 
     /**
+     * Get configuration array or value
+     * @param null $value
+     * @return array|bool
+     */
+    public function getConfig($value = null) {
+        if (!empty($value)){
+            return (isset($this->config[$value])) ? $this->config[$value]: false ;
+        } else {
+            return $this->config;
+        }
+    }
+
+    /**
+     * Set configuration value
+     * @param $configKey
+     * @param null $value
+     * @return bool
+     */
+    public function setConfig($configKey, $value) {
+        if (!empty($value) && isset($this->config[$configKey])) {
+            $this->config[$configKey] = $value;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * @param AmazonProduct[] $amazonProducts For maximum performance count($amazonProducts) < 12000
      * @param string $marketPlaceId
      *
