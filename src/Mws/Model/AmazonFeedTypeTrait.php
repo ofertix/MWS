@@ -5,13 +5,6 @@ namespace Ofertix\Mws\Model;
 trait AmazonFeedTypeTrait
 {
 
-    public static $feeds = [
-        "product",
-        "price",
-        "inventory",
-        "pricing"
-    ];
-
 
     public static $statusList = [
           'pending' => [
@@ -22,15 +15,15 @@ trait AmazonFeedTypeTrait
            'done' => [ 'DONE' => '_DONE_'],
         ];
     public static $feedTypes = [
-            "product" => "_POST_PRODUCT_DATA_",
-            "relationship" => "_POST_PRODUCT_RELATIONSHIP_DATA_",
-            "item" => "_POST_ITEM_DATA_",
+            "Product" => "_POST_PRODUCT_DATA_",
+            "Relationship" => "_POST_PRODUCT_RELATIONSHIP_DATA_",
+            "Item" => "_POST_ITEM_DATA_",
             "ProductImage"=>"_POST_PRODUCT_IMAGE_DATA_",
-            "pricing"=>"_POST_PRODUCT_PRICING_DATA_",
-            "inventory" =>"_POST_INVENTORY_AVAILABILITY_DATA_",
-            "acknowledment" => "_POST_ORDER_ACKNOWLEDGEMENT_DATA_",
-            "fullfillment" => "_POST_ORDER_FULFILLMENT_DATA_",
-            "adjustment "=> "_POST_PAYMENT_ADJUSTMENT_DATA_",
+            "Pricing"=>"_POST_PRODUCT_PRICING_DATA_",
+            "Inventory" =>"_POST_INVENTORY_AVAILABILITY_DATA_",
+            "Acknowledment" => "_POST_ORDER_ACKNOWLEDGEMENT_DATA_",
+            "Fullfillment" => "_POST_ORDER_FULFILLMENT_DATA_",
+            "Adjustment "=> "_POST_PAYMENT_ADJUSTMENT_DATA_",
 ];
 
     public function getProductFeedTypes()
