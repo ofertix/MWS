@@ -4,6 +4,10 @@ namespace Ofertix\Mws;
 
 class MwsClientFactory
 {
+    const FEED_AND_REPORT = 0;
+    const PRODUCTS = 1;
+    const ORDERS = 2;
+    const FBA_INVENTORY = 3;
 
     private static $clients = array(
         self::FEED_AND_REPORT => 'feed',
