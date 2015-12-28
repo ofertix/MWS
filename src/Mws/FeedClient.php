@@ -100,7 +100,7 @@ class FeedClient
             rewind($handle);
             $xmlResponse = stream_get_contents($handle);
             try {
-                new \SimpleXMLElement($xmlResponse);
+                return new \SimpleXMLElement($xmlResponse);
             } catch(\Exception $ex) {
                 return $xmlResponse;
             }
