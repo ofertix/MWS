@@ -49,16 +49,6 @@ class AmazonProductImage implements AmazonFeedTypeInterface
         return $rootNode;
     }
 
-    public function feedName()
-    {
-        return self::FEED_NAME;
-    }
-
-    public function feedType()
-    {
-        return self::FEED_TYPE;
-    }
-
     /**
      * @return array
      */

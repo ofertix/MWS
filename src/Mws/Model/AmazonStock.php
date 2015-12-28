@@ -38,17 +38,6 @@ class AmazonStock implements AmazonFeedTypeInterface
     }
 
 
-    public function feedName()
-    {
-        return self::FEED_NAME;
-    }
-
-    public function feedType()
-    {
-        return self::FEED_TYPE;
-    }
-
-
     protected function validateSku($sku)
     {
         if ( empty($sku) ) {
