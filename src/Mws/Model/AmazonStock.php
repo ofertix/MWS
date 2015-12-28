@@ -4,8 +4,8 @@ namespace Ofertix\Mws\Model;
 
 class AmazonStock implements AmazonFeedTypeInterface
 {
-    const FEED_NAME = 'Inventory';
-    const FEED_TYPE = '_POST_INVENTORY_AVAILABILITY_DATA_';
+    const FEED_NAME = 'inventory';
+    use AmazonFeedTypeTrait;
 
     /** @var  string */
     protected $sku;

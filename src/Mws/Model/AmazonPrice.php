@@ -4,8 +4,8 @@ namespace Ofertix\Mws\Model;
 
 class AmazonPrice implements AmazonFeedTypeInterface
 {
-    const FEED_NAME = 'Price';
-    const FEED_TYPE = '_POST_PRODUCT_PRICING_DATA_';
+    const FEED_NAME = 'pricing';
+    use AmazonFeedTypeTrait;
 
     /** @var  string */
     protected $sku;
@@ -44,15 +44,6 @@ class AmazonPrice implements AmazonFeedTypeInterface
         return $rootNode;
     }
 
-    public function feedName()
-    {
-        return self::FEED_NAME;
-    }
-
-    public function feedType()
-    {
-        return self::FEED_TYPE;
-    }
 
 
     protected function validateSku($sku)

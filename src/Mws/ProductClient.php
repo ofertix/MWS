@@ -21,7 +21,7 @@ class ProductClient
     public function __construct(array $config)
     {
         $this->config = $config;
-        $this->client = MwsClient::getClient($this->config, 'product');
+        $this->client = MwsClientFactory::getClient($this->config, 'product');
         $this->class = isset($config['amazon_product_class']) ? $config['amazon_product_class'] :'\Ofertix\Mws\Model\AmazonProduct';
     }
 

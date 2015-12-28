@@ -9,9 +9,8 @@ namespace Ofertix\Mws\Model;
  */
 class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterface
 {
-
-    const FEED_NAME = 'Product';
-    const FEED_TYPE = '_POST_PRODUCT_DATA_';
+    use AmazonFeedTypeTrait;
+    const FEED_NAME = 'product';
 
     protected $id;
     /** @var Ean13  */
@@ -54,15 +53,6 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
         $this->images = array();
     }
 
-    public function feedName()
-    {
-        return self::FEED_NAME;
-    }
-
-    public function feedType()
-    {
-        return self::FEED_TYPE;
-    }
 
     /**
      * @return \SimpleXMLElement|String
@@ -553,7 +543,7 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
      */
     public function setLaunchDate($launchDate)
     {
-        $this->launchDate = $launchDate;
+        $this->launchDate = ($launchDate instanceof \DateTime) ? $launchDate->format('c') : $launchDate;
 
         return $this;
     }

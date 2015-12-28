@@ -5,6 +5,7 @@ namespace Ofertix\Mws\Model;
 interface AmazonFeedTypeInterface
 {
 
+
     /**
      * @return string
      */

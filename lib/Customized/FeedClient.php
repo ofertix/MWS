@@ -2,6 +2,9 @@
 
 class FeedClient extends MarketplaceWebService_Client
 {
+    protected $responseBodyContents;
+
+
 
     /**
      * Método extendido del original para añadirle los datos de cuota en el header metadata.
@@ -67,4 +70,41 @@ class FeedClient extends MarketplaceWebService_Client
             'ResponseBody' => $httpResponse,
             'ResponseHeaderMetadata' => $responseHeaderMetadata);
     }
+
+
+    /**
+     * cURL callback to write the response HTTP body into a stream. This is only intended to be used
+     * with RequestType::POST_DOWNLOAD request types, since the responses can potentially become
+     * large.
+     *
+     * @param $ch - The curl handle.
+     * @param $string - body portion to write.
+     * @return int - number of byes written.
+     */
+    protected function responseCallback($ch, $string) {
+        $httpStatusCode = (int) curl_getinfo($this->curlClient, CURLINFO_HTTP_CODE);
+
+        // For unsuccessful responses, i.e. non-200 HTTP responses, we write the response body
+        // into a separate stream.
+        if ($httpStatusCode == 200) {
+            $responseHandle = $this->responseBodyContents;
+        } else {
+            $responseHandle = $this->errorResponseBody;
+        }
+
+        return fwrite($responseHandle, $string);
+
+    }
+
+    protected function configureCurlOptions($action, array $converted, $streamHandle = null, $contentMd5 = null)
+    {
+        $curlOptions = parent::configureCurlOptions($action, $converted, $streamHandle, $contentMd5);
+        if (RequestType::getRequestType($action) == RequestType::POST_DOWNLOAD) {
+            $this->responseBodyContents = $streamHandle;
+            $curlOptions[CURLOPT_WRITEFUNCTION] = array ($this, 'responseCallback');
+        }
+        return $curlOptions;
+    }
+
+
 }

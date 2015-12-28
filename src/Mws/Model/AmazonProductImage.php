@@ -4,8 +4,8 @@ namespace Ofertix\Mws\Model;
 
 class AmazonProductImage implements AmazonFeedTypeInterface
 {
+    use AmazonFeedTypeTrait;
     const FEED_NAME = 'ProductImage';
-    const FEED_TYPE = 'PRODUCT_IMAGES_FEED';
 
     const TYPE_MAIN = 'Main';
     const TYPE_ALTERNATE = 'PT';

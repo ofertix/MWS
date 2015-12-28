@@ -2,21 +2,8 @@
 
 namespace Ofertix\Mws;
 
-class MwsClient
+class MwsClientFactory
 {
-    const FEED_AND_REPORT = 0;
-    const PRODUCTS = 1;
-    const ORDERS = 2;
-    const FBA_INVENTORY = 3;
-
-    const SUBMITTED = '_SUBMITTED_';
-    const IN_PROGRESS = '_IN_PROGRESS_';
-    const CANCELLED = '_CANCELLED_';
-    const DONE = '_DONE_';
-
-    const OPERATION_TYPE_UPDATE = 'Update';
-    const OPERATION_TYPE_DELETE = 'Delete';
-    const OPERATION_TYPE_PARTIAL_UPDATE = 'PartialUpdate';
 
     private static $clients = array(
         self::FEED_AND_REPORT => 'feed',
