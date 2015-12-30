@@ -4,7 +4,7 @@ namespace Ofertix\Mws\Model;
 
 class AmazonPrice implements AmazonFeedTypeInterface
 {
-    const FEED_NAME = 'pricing';
+    const FEED_NAME = 'price';
     use AmazonFeedTypeTrait;
 
     /** @var  string */
