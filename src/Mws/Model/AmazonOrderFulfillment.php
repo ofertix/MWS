@@ -65,13 +65,15 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
 
     public function addItem(
         $amazonOrderItemId,
+        $quantity,
         $orderItemId,
-        $quantity
+        $merchantFulfillmentItemID
     ) {
         $this->items[$orderItemId] = new AmazonOrderFulfillmentItem(
             $amazonOrderItemId,
+            $quantity,
             $orderItemId,
-            $quantity
+            $merchantFulfillmentItemID
         );
 
     }
@@ -84,7 +86,7 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
     {
         $rootNode = new \SimpleXMLElement('<'.$this->feedName().'></'.$this->feedName().'>');
         $rootNode->addChild('AmazonOrderID', $this->amazonOrderID());
-        $rootNode->addChild('MerchantOrderID', $this->merchantOrderID());
+        //$rootNode->addChild('MerchantOrderID', $this->merchantOrderID());
         $rootNode->addChild('MerchantFulfillmentID', $this->merchantFulfillmentID());
         $rootNode->addChild('FulfillmentDate', $this->fulfillmentDate());
         $fulfillmentDate = $rootNode->addChild('FulfillmentData');
@@ -94,7 +96,8 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
 
         foreach ($this->items() as $item) {
             $ItemNode = $rootNode->addChild('Item');
-            $ItemNode->addChild('MerchantOrderItemID', $item->merchantOrderItemID());
+            $ItemNode->addChild('AmazonOrderItemCode', $item->amazonOrderItemCode());
+            // $ItemNode->addChild('MerchantOrderItemID', $item->merchantOrderItemID());
             $ItemNode->addChild('MerchantFulfillmentItemID', $item->merchantFulfillmentItemID());
             $ItemNode->addChild('Quantity', $item->quantity());
         }
