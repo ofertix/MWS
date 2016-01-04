@@ -8,7 +8,7 @@ namespace Ofertix\Mws\Model;
  */
 class AmazonOrderAcknowledgement implements AmazonFeedTypeInterface
 {
-    const FEED_NAME = 'OrderAcknowledgement.php';
+    const FEED_NAME = 'OrderAcknowledgement';
 
     use AmazonFeedTypeTrait;
 
@@ -24,11 +24,13 @@ class AmazonOrderAcknowledgement implements AmazonFeedTypeInterface
 
     public function __construct(
         $amazonOrderID,
+        $statusCode,
         $merchantOrderID = null,
         $items = []
     ) {
         $this->amazonOrderID = $amazonOrderID;
         $this->merchantOrderID = $merchantOrderID;
+        $this->statusCode = ($statusCode === true)? 'Sucess' : 'Failure';
         $this->items = $items;
 
     }
@@ -216,6 +218,26 @@ class AmazonOrderAcknowledgement implements AmazonFeedTypeInterface
     public function setMerchantOrderID($merchantOrderID)
     {
         $this->merchantOrderID = $merchantOrderID;
+        return $this;
+    }
+
+    /**
+     * Get StatusCode
+     *
+     * @return string
+     */
+    public function statusCode()
+    {
+        return $this->statusCode;
+    }
+
+    /**
+     * @param string $statusCode
+     * @return AmazonOrderAcknowledgement
+     */
+    public function setStatusCode($statusCode)
+    {
+        $this->statusCode = $statusCode;
         return $this;
     }
 

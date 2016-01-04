@@ -47,7 +47,7 @@ class FeedClient
         $this->orderFulfillmentClass = isset($config['amazon_orderfulfillment_class']) ?
             $config['amazon_orderfulfillment_class'] :'\Ofertix\Mws\Model\AmazonOrderFulfillment';
         $this->orderAcknowledgementClass = isset($config['amazon_orderacknowledgement_class']) ?
-            $config['amazon_orderacknowledgement_class'] :'\Ofertix\Mws\Model\AmazonAcknowledgement';
+            $config['amazon_orderacknowledgement_class'] :'\Ofertix\Mws\Model\AmazonOrderAcknowledgement';
     }
 
 
@@ -582,7 +582,7 @@ HERE_DOC;
      * @return AmazonRequest
      * @throws \Exception
      */
-    public function cancelOrderFulfillment($amazonOrders, $marketPlaceId = 'default')
+    public function cancelOrder($amazonOrders, $marketPlaceId = 'default')
     {
         $marketPlaceId = $marketPlaceId === 'default' ? $this->config['marketplace_id'] : $marketPlaceId;
         foreach ($amazonOrders as $amazonOrder) {
