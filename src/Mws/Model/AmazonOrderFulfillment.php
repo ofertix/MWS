@@ -48,9 +48,9 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
         $carrierCode,
         $shippingMethod,
         $shipperTrackingNumber,
-        $items = [],
         $merchantOrderID = null,
-        $merchantFulfillmentID = null
+        $merchantFulfillmentID = null,
+        $items = []
     ) {
         $this->amazonOrderID = $amazonOrderID;
         $this->items = $items;
