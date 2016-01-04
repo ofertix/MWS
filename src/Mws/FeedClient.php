@@ -28,6 +28,7 @@ class FeedClient
     private $requestClass;
     private $productClass;
     private $orderFulfillmentClass;
+    private $orderAcknowledgementClass;
 
     public function __construct(array $config)
     {
@@ -45,6 +46,8 @@ class FeedClient
             $config['amazon_price_class'] :'\Ofertix\Mws\Model\AmazonPrice';
         $this->orderFulfillmentClass = isset($config['amazon_orderfulfillment_class']) ?
             $config['amazon_orderfulfillment_class'] :'\Ofertix\Mws\Model\AmazonOrderFulfillment';
+        $this->orderAcknowledgementClass = isset($config['amazon_orderacknowledgement_class']) ?
+            $config['amazon_orderacknowledgement_class'] :'\Ofertix\Mws\Model\AmazonAcknowledgement';
     }
 
 
@@ -555,6 +558,35 @@ HERE_DOC;
         $marketPlaceId = $marketPlaceId === 'default' ? $this->config['marketplace_id'] : $marketPlaceId;
         foreach ($amazonOrders as $amazonOrder) {
             if ($amazonOrder instanceof $this->orderFulfillmentClass) {
+                continue;
+            }
+            throw new \Exception('ProductImage must be or extend \Ofertix\Mws\Model\AmazonOrderFulfillment');
+        }
+
+        /** @var \DOMDocument $xmlFeed */
+        $xmlFeed = $this->createXmlFeed($amazonOrders);
+
+        /** @var  \MarketplaceWebService_Model_SubmitFeedResponse $response */
+        $response = $this->submitFeed($xmlFeed, $marketPlaceId, $amazonOrder);
+
+        $this->handleThrottling($response);
+        /** @var AmazonRequest $amazonRequest */
+        $amazonRequest = $this->getRequestData($response, $xmlFeed);
+
+        return $amazonRequest;
+    }
+
+    /**
+     * @param $amazonOrders
+     * @param string $marketPlaceId
+     * @return AmazonRequest
+     * @throws \Exception
+     */
+    public function cancelOrderFulfillment($amazonOrders, $marketPlaceId = 'default')
+    {
+        $marketPlaceId = $marketPlaceId === 'default' ? $this->config['marketplace_id'] : $marketPlaceId;
+        foreach ($amazonOrders as $amazonOrder) {
+            if ($amazonOrder instanceof $this->orderAcknowledgementClass) {
                 continue;
             }
             throw new \Exception('ProductImage must be or extend \Ofertix\Mws\Model\AmazonOrderFulfillment');

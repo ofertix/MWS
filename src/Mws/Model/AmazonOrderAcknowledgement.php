@@ -33,6 +33,12 @@ class AmazonOrderAcknowledgement implements AmazonFeedTypeInterface
 
     }
 
+    public function addItem($amazonOrderItemId, $cancelReason ) {
+
+        $orderItemObj  = new AmazonOrderFulfillmentItem($amazonOrderItemId);
+        $orderItemObj->setCancelReason($cancelReason);
+        $this->items[] = $orderItemObj;
+    }
 
     /**
      * @return \SimpleXMLElement|String
