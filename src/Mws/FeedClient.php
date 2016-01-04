@@ -552,12 +552,6 @@ HERE_DOC;
     public function updateOrderFulfillment($amazonOrders, $marketPlaceId = 'default')
     {
         $marketPlaceId = $marketPlaceId === 'default' ? $this->config['marketplace_id'] : $marketPlaceId;
-        foreach ($amazonOrders as $amazonOrder) {
-            if ($amazonOrder instanceof $this->orderFulfillmentClass) {
-                continue;
-            }
-            throw new \Exception('ProductImage must be or extend \Ofertix\Mws\Model\AmazonOrderFulfillment');
-        }
 
         /** @var \DOMDocument $xmlFeed */
         $xmlFeed = $this->createXmlFeed($amazonOrders);

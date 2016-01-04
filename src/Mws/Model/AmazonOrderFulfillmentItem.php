@@ -9,20 +9,45 @@ namespace Ofertix\Mws\Model;
 class AmazonOrderFulfillmentItem
 {
     /** @var  string */
+    protected $amazonOrderItemCode;
+    /** @var  string */
     protected $merchantOrderItemID;
     /** @var  string */
     protected $merchantFulfillmentItemID;
     /** @var  integer */
     protected $quantity;
 
+    /**
+     * Get AmazonOrderItemCode
+     *
+     * @return string
+     */
+    public function amazonOrderItemCode()
+    {
+        return $this->amazonOrderItemCode;
+    }
+
+    /**
+     * @param string $amazonOrderItemCode
+     * @return AmazonOrderFulfillmentItem
+     */
+    public function setAmazonOrderItemCode($amazonOrderItemCode)
+    {
+        $this->amazonOrderItemCode = $amazonOrderItemCode;
+        return $this;
+    }
+
     public function __construct(
         $amazonOrderItemId,
-        $orderItemId,
-        $quantity
+        $quantity,
+        $orderItemId = null,
+        $merchantFulfillmentItemID = null
     ) {
+        $this->amazonOrderItemCode = $amazonOrderItemId;
+        $this->quantity = $quantity;
         $this->merchantOrderItemID = $amazonOrderItemId;
         $this->merchantFulfillmentItemID = $orderItemId;
-        $this->quantity = $quantity;
+
     }
 
     /**
