@@ -16,6 +16,21 @@ class AmazonOrderFulfillmentItem
     protected $merchantFulfillmentItemID;
     /** @var  integer */
     protected $quantity;
+    /** @var  string */
+    protected $cancelReason;
+    /** @var  string */
+    protected $cancelReasons = [
+        "NoInventory",
+        "ShippingAddressUndeliverable",
+        "CustomerExchange",
+        "BuyerCanceled",
+        "GeneralAdjustment",
+        "CarrierCreditDecision",
+        "RiskAssessmentInformationNotValid",
+        "CarrierCoverageFailure",
+        "CustomerReturn",
+        "MerchandiseNotReceived"
+    ];
 
     /**
      * Get AmazonOrderItemCode
@@ -39,7 +54,7 @@ class AmazonOrderFulfillmentItem
 
     public function __construct(
         $amazonOrderItemId,
-        $quantity,
+        $quantity = null,
         $orderItemId = null,
         $merchantFulfillmentItemID = null
     ) {
@@ -108,6 +123,31 @@ class AmazonOrderFulfillmentItem
     {
         $this->quantity = $quantity;
         return $this;
+    }
+
+    /**
+     * Get CancelReason
+     *
+     * @return string
+     */
+    public function cancelReason()
+    {
+        return $this->cancelReason;
+    }
+
+    /**
+     * @param $cancelReason
+     * @return $this|bool
+     */
+    public function setCancelReason($cancelReason)
+    {
+        if (in_array($cancelReason, $this->cancelReasons )) {
+            $this->cancelReason = $cancelReason;
+            return $this;
+        } else {
+            return false;
+        }
+
     }
 
 }
