@@ -20,7 +20,7 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
     protected $merchantOrderID;
     /** @var  string */
     protected $merchantFulfillmentID;
-    /** @var  datetime */
+    /** @var  DateTime */
     protected $fulfillmentDate;
     /** @var  string */
     protected $carrierCode;
@@ -30,6 +30,7 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
     protected $shipperTrackingNumber;
     /** @var  array */
     protected $items;
+
     /**
      * AmazonOrderFulfillment constructor.
      * @param $amazonOrderID
@@ -37,16 +38,17 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
      * @param $carrierCode
      * @param $shippingMethod
      * @param $shipperTrackingNumber
+     * @param array $items
      * @param null $merchantOrderID
      * @param null $merchantFulfillmentID
      */
     public function __construct(
         $amazonOrderID,
-        $items,
         $fulfillmentDate,
         $carrierCode,
         $shippingMethod,
         $shipperTrackingNumber,
+        $items = [],
         $merchantOrderID = null,
         $merchantFulfillmentID = null
     ) {
