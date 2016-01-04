@@ -42,6 +42,8 @@ class FeedClient
             $config['amazon_stock_class'] :'\Ofertix\Mws\Model\AmazonStock';
         $this->priceClass = isset($config['amazon_price_class']) ?
             $config['amazon_price_class'] :'\Ofertix\Mws\Model\AmazonPrice';
+        $this->priceClass = isset($config['amazon_orderfullfillment_class']) ?
+            $config['amazon_orderfullfillment_class'] :'\Ofertix\Mws\Model\AmazonOrderFulfillment';
     }
 
 
@@ -541,5 +543,33 @@ HERE_DOC;
         }
     }
 
+    /**
+     * @param $amazonOrders
+     * @param string $marketPlaceId
+     * @return AmazonRequest
+     * @throws \Exception
+     */
+    public function updateOrderFullfillment($amazonOrders, $marketPlaceId = 'default')
+    {
+        $marketPlaceId = $marketPlaceId === 'default' ? $this->config['marketplace_id'] : $marketPlaceId;
+        foreach ($amazonOrders as $amazonOrder) {
+            if ($amazonOrder instanceof $this->orderFullfillmentClass) {
+                continue;
+            }
+            throw new \Exception('ProductImage must be or extend \Ofertix\Mws\Model\AmazonOrderFullfillment');
+        }
+
+        /** @var \DOMDocument $xmlFeed */
+        $xmlFeed = $this->createXmlFeed($amazonOrders);
+
+        /** @var  \MarketplaceWebService_Model_SubmitFeedResponse $response */
+        $response = $this->submitFeed($xmlFeed, $marketPlaceId, $amazonOrder);
+
+        $this->handleThrottling($response);
+        /** @var AmazonRequest $amazonRequest */
+        $amazonRequest = $this->getRequestData($response, $xmlFeed);
+
+        return $amazonRequest;
+    }
 
 }
