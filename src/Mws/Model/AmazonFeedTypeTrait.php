@@ -58,4 +58,8 @@ trait AmazonFeedTypeTrait
     }
 
 
+    public function getAmazonFormattedDate($dateObj) {
+        return $dateObj->format('Y-m-d\TH:i:s\Z');
+    }
+
 }

@@ -329,8 +329,9 @@ class FeedClient
                 /** @var \SimpleXMLElement $feed */
                 $feed = $feedTypeObject->xmlNode();
 
-                if (!self::validateFeed($feed->asXML(), $feedName)) {
-                    throw new \Exception('Xml is not valid!');
+                $validatedFeed =self::validateFeed($feed->asXML(), $feedName);
+                if ($validatedFeed !== true) {
+                    throw new \Exception(var_export($validatedFeed));
                 }
 
             } catch (\Exception $e) {
@@ -412,12 +413,14 @@ HERE_DOC;
             $xmlfeed->resolveExternals = true;
             $xmlfeed->strictErrorChecking = true;
             $xmlfeed->preserveWhiteSpace = false;
-            $xmlfeed->formatOutput = false;
+            $xmlfeed->formatOutput = true;
             $xmlfeed->loadXML($feed);
             $valid = $xmlfeed->schemaValidate($pathXSD);
+        } else {
+            throw new \Exception("XSD file for feedtype $feedName not found in path $pathXSD");
         }
 
-        return $valid;
+        return ($valid === false) ? libxml_get_last_error() : true ;
     }
 
     /**
