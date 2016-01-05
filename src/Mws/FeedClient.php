@@ -10,11 +10,12 @@ use Ofertix\Mws\Model\AmazonProductImage;
 use Ofertix\Mws\Model\AmazonRequest;
 use Ofertix\Mws\Model\AmazonStock;
 
+
 class FeedClient
 {
     const XSD_DIR = 'xsd';
 
-    use AmazonFeedTypeTrait;
+    use Model\AmazonFeedTypeTrait;
 
     const FEED_TYPE_RELATIONSHIP = 'Relationship';
     const RELATIONSHIPS_FEED = '_POST_PRODUCT_RELATIONSHIP_DATA_';
@@ -329,7 +330,7 @@ class FeedClient
                 /** @var \SimpleXMLElement $feed */
                 $feed = $feedTypeObject->xmlNode();
 
-                $validatedFeed =self::validateFeed($feed->asXML(), $feedName);
+                $validatedFeed = self::validateFeed($feed->asXML(), $feedName);
                 if ($validatedFeed !== true) {
                     throw new \Exception(var_export($validatedFeed));
                 }
@@ -399,10 +400,10 @@ HERE_DOC;
     /**
      * @param $feed
      * @param $feedName
-     *
-     * @return bool
+     * @return bool|\LibXMLError
+     * @throws \Exception
      */
-    private function validateFeed($feed, $feedName)
+    public function validateFeed($feed, $feedName)
     {
         $valid = false;
         $pathXSD = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.
