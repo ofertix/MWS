@@ -221,6 +221,4 @@ class AmazonRequest
 
         return $this;
     }
-
-
 }

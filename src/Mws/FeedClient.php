@@ -2,6 +2,7 @@
 
 namespace Ofertix\Mws;
 
+use Ofertix\Mws\Model\AmazonDeleteProduct;
 use Ofertix\Mws\Model\AmazonFeedTypeInterface;
 use Ofertix\Mws\Model\AmazonPrice;
 use Ofertix\Mws\Model\AmazonProduct;
@@ -34,6 +35,7 @@ class FeedClient
         $this->imageClass = isset($config['amazon_image_class']) ? $config['amazon_image_class'] :'\Ofertix\Mws\Model\AmazonProductImage';
         $this->stockClass = isset($config['amazon_stock_class']) ? $config['amazon_stock_class'] :'\Ofertix\Mws\Model\AmazonStock';
         $this->priceClass = isset($config['amazon_price_class']) ? $config['amazon_price_class'] :'\Ofertix\Mws\Model\AmazonPrice';
+        $this->deleteClass = isset($config['amazon_delete_class']) ? $config['amazon_delete_class'] :'\Ofertix\Mws\Model\AmazonDeleteProduct';
 
     }
 
@@ -193,6 +195,55 @@ class FeedClient
 
         return $amazonRequest;
     }
+
+
+    /**
+     * @param AmazonDeleteProduct[] $amazonDeleteProducts For maximum performance count($amazonProducts) < 12000
+     * @param string $marketPlaceId
+     *
+     * @return AmazonRequest
+     * @throws \Exception
+     */
+    public function deleteProducts($amazonDeleteProducts, $marketPlaceId = 'default')
+    {
+        $marketPlaceId = $marketPlaceId === 'default' ? $this->config['marketplace_id'] : $marketPlaceId;
+
+        foreach ($amazonDeleteProducts as $amazonDeleteProduct) {
+            if ($amazonDeleteProduct instanceof $this->deleteClass) {
+                continue;
+            }
+            throw new \Exception('Products must be or extend \Ofertix\Mws\Model\AmazonDeleteProduct');
+        }
+
+        /** @var \DOMDocument $xmlFeed */
+        $xmlFeed = $this->createXmlFeed($amazonDeleteProducts, false , self::OPERATION_TYPE_DELETE);
+
+        /** @var  \MarketplaceWebService_Model_SubmitFeedResponse $response */
+        $response = $this->submitFeed($xmlFeed, $marketPlaceId, $amazonDeleteProduct);
+
+        $this->handleThrottling($response);
+        /** @var AmazonRequest $amazonRequest */
+        $amazonRequest = $this->getRequestData($response, $xmlFeed);
+
+        return $amazonRequest;
+    }
+
+
+    public function getFeedSubmissionResult($feedSubmissionId)
+    {
+        $stream = @fopen('php://memory', 'rw+');
+//        $stream = rewind($stream);
+        $request = new \MarketplaceWebService_Model_GetFeedSubmissionResultRequest();
+        $request->setMerchant($this->config['merchant_id'])
+            ->setMarketplace($this->config['marketplace_id'])
+            ->setFeedSubmissionId($feedSubmissionId)
+            ->setFeedSubmissionResult($stream);
+        /** @var \MarketplaceWebService_Model_GetFeedSubmissionResultResponse $response */
+        $response = $request->getFeedSubmissionResult($request);
+        return $response;
+    }
+
+
     /**
      * @param AmazonFeedTypeInterface[] $feedTypeObjects
      * @param bool|false $clear
@@ -407,47 +458,6 @@ HERE_DOC;
         return $amazonRequest;
     }
 
-
-//
-//
-//    /**
-//     * @param UploadableProductInterface $ofertixProductVO
-//     */
-//    public function deleteProduct(UploadableProductInterface $ofertixProductVO)
-//    {
-//        $legacyProductParaJC = array('sku' => $ofertixProductVO->sku(),
-//            'ean' => $ofertixProductVO->ean13()->ean13(),
-//            'title' => $ofertixProductVO->title(),
-//            'description' => $ofertixProductVO->description(),
-//            'brand' => $ofertixProductVO->brand(),
-//            'quantity' => $ofertixProductVO->stock(),
-//            'price' => $ofertixProductVO->price(),
-//            'relations' => array(),
-//            'ItemType' => 'true'
-//        );
-//
-//        $result = $this->updateByFeedType(MwsClient::MESSAGE_TYPE_PRODUCT,
-//            array($legacyProductParaJC),
-//            false,
-//            MwsClient::OPERATION_TYPE_DELETE);
-//
-//        /** @var  $response \MarketplaceWebService_Model_SubmitFeedResponse */
-//        $response = $result[0];
-//        $xml = $result[1];
-//        $this->getRequestData($response, $xml);
-//        $this->handleThrottling($response);
-//    }
-
-
-    public function updateOverrideShippingRates()
-    {
-
-    }
-
-    public function reviewProcessingResults()
-    {
-
-    }
 
     /**
      * @param \MarketplaceWebService_Model_SubmitFeedResponse $response
