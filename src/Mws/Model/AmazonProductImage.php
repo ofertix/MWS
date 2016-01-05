@@ -4,8 +4,8 @@ namespace Ofertix\Mws\Model;
 
 class AmazonProductImage implements AmazonFeedTypeInterface
 {
+    use AmazonFeedTypeTrait;
     const FEED_NAME = 'ProductImage';
-    const FEED_TYPE = '_POST_PRODUCT_IMAGE_DATA_';
 
     const TYPE_MAIN = 'Main';
     const TYPE_ALTERNATE = 'PT';
@@ -47,16 +47,6 @@ class AmazonProductImage implements AmazonFeedTypeInterface
         $rootNode->addChild('ImageLocation', $this->url());
 
         return $rootNode;
-    }
-
-    public function feedName()
-    {
-        return self::FEED_NAME;
-    }
-
-    public function feedType()
-    {
-        return self::FEED_TYPE;
     }
 
     /**

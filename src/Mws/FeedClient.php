@@ -14,6 +14,8 @@ class FeedClient
 {
     const XSD_DIR = 'xsd';
 
+    use AmazonFeedTypeTrait;
+
     const FEED_TYPE_RELATIONSHIP = 'Relationship';
     const RELATIONSHIPS_FEED = '_POST_PRODUCT_RELATIONSHIP_DATA_';
 
@@ -25,19 +27,96 @@ class FeedClient
     private $client;
     private $requestClass;
     private $productClass;
+    private $orderFulfillmentClass;
+    private $orderAcknowledgementClass;
 
     public function __construct(array $config)
     {
         $this->config = $config;
-        $this->client = MwsClient::getClient($config, 'feed');
-        $this->requestClass = isset($config['amazon_request_class']) ? $config['amazon_request_class'] :'\Ofertix\Mws\Model\AmazonRequest';
-        $this->productClass = isset($config['amazon_product_class']) ? $config['amazon_product_class'] :'\Ofertix\Mws\Model\AmazonProduct';
-        $this->imageClass = isset($config['amazon_image_class']) ? $config['amazon_image_class'] :'\Ofertix\Mws\Model\AmazonProductImage';
-        $this->stockClass = isset($config['amazon_stock_class']) ? $config['amazon_stock_class'] :'\Ofertix\Mws\Model\AmazonStock';
-        $this->priceClass = isset($config['amazon_price_class']) ? $config['amazon_price_class'] :'\Ofertix\Mws\Model\AmazonPrice';
-        $this->deleteClass = isset($config['amazon_delete_class']) ? $config['amazon_delete_class'] :'\Ofertix\Mws\Model\AmazonDeleteProduct';
+        $this->client = MwsClientFactory::getClient($config, 'feed');
+        $this->requestClass = isset($config['amazon_request_class']) ?
+            $config['amazon_request_class'] : '\Ofertix\Mws\Model\AmazonRequest';
+        $this->productClass = isset($config['amazon_product_class']) ?
+            $config['amazon_product_class'] : '\Ofertix\Mws\Model\AmazonProduct';
+        $this->imageClass = isset($config['amazon_image_class']) ?
+            $config['amazon_image_class'] : '\Ofertix\Mws\Model\AmazonProductImage';
+        $this->stockClass = isset($config['amazon_stock_class']) ?
+            $config['amazon_stock_class'] : '\Ofertix\Mws\Model\AmazonStock';
+        $this->priceClass = isset($config['amazon_price_class']) ?
+            $config['amazon_price_class'] : '\Ofertix\Mws\Model\AmazonPrice';
+        $this->deleteClass = isset($config['amazon_delete_class']) ?
+            $config['amazon_delete_class'] : '\Ofertix\Mws\Model\AmazonDeleteProduct';
+        $this->orderFulfillmentClass = isset($config['amazon_orderfulfillment_class']) ?
+            $config['amazon_orderfulfillment_class'] : '\Ofertix\Mws\Model\AmazonOrderFulfillment';
+        $this->orderAcknowledgementClass = isset($config['amazon_orderacknowledgement_class']) ?
+            $config['amazon_orderacknowledgement_class'] : '\Ofertix\Mws\Model\AmazonOrderAcknowledgement';
 
     }
+    /**
+     * Get FeedSubmiisonList full info
+     * @param array $status
+     * @param array $feedTypes
+     * @param int $limit
+     * @return array
+     */
+    public function getSubmissionList($status = array(), $feedTypes = array() ,$limit = 20)
+    {
+        $request = new \MarketplaceWebService_Model_GetFeedSubmissionListRequest();
+        $request->setMerchant($this->config['merchant_id']);
+
+        $status = (count($status) > 0 ) ? $status : $this->getPendingStatusList();
+        $statusList = new \MarketplaceWebService_Model_StatusList($status);
+        $request->setFeedProcessingStatusList($statusList);
+
+        $feedTypes = (count($feedTypes)>0 ) ? $feedTypes : $this->getFeedTypes();
+        $feedTypeList = new \MarketplaceWebService_Model_TypeList();
+        foreach ($feedTypes as $feedType) {
+            $feedTypeList->withType($feedType);
+        }
+        $request->setFeedTypeList($feedTypeList);
+        $request->setMaxCount($limit);
+
+        $response = $this->client->getFeedSubmissionList($request);
+        $submissions = array();
+        if ($response->isSetGetFeedSubmissionListResult()) {
+            $getFeedSubmissionListResult = $response->getGetFeedSubmissionListResult();
+            $feedSubmissionInfoList = $getFeedSubmissionListResult->getFeedSubmissionInfoList();
+            foreach ($feedSubmissionInfoList as $feedSubmissionInfo) {
+                $submissions[] = $this->getSubmission($feedSubmissionInfo->getFeedSubmissionId());
+            }
+            return $submissions;
+        }
+
+
+    }
+
+    /** Get FeedSubmissionInfo
+     * @param $feedSubmissionId
+     * @return bool|\SimpleXMLElement
+     */
+    public function getSubmission($feedSubmissionId){
+
+        if ($feedSubmissionId > 0) {
+            $request = new \MarketplaceWebService_Model_GetFeedSubmissionResultRequest();
+            $request->setFeedSubmissionId($feedSubmissionId);
+            $request->setMarketplace($this->config['marketplace_id']);
+            $request->setMerchant($this->config['merchant_id']);
+            $handle = @fopen('php://memory', 'rw+');
+            $request->setFeedSubmissionResult($handle);
+            $this->client->getFeedSubmissionResult($request);
+            rewind($handle);
+            $xmlResponse = stream_get_contents($handle);
+            try {
+                return new \SimpleXMLElement($xmlResponse);
+            } catch(\Exception $ex) {
+                return $xmlResponse;
+            }
+        } else {
+            return false;
+        }
+
+    }
+
 
     /**
      * Get configuration array or value
@@ -226,21 +305,6 @@ class FeedClient
         $amazonRequest = $this->getRequestData($response, $xmlFeed);
 
         return $amazonRequest;
-    }
-
-
-    public function getFeedSubmissionResult($feedSubmissionId)
-    {
-        $stream = @fopen('php://memory', 'rw+');
-//        $stream = rewind($stream);
-        $request = new \MarketplaceWebService_Model_GetFeedSubmissionResultRequest();
-        $request->setMerchant($this->config['merchant_id'])
-            ->setMarketplace($this->config['marketplace_id'])
-            ->setFeedSubmissionId($feedSubmissionId)
-            ->setFeedSubmissionResult($stream);
-        /** @var \MarketplaceWebService_Model_GetFeedSubmissionResultResponse $response */
-        $response = $request->getFeedSubmissionResult($request);
-        return $response;
     }
 
 
