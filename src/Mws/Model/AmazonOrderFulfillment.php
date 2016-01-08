@@ -25,6 +25,8 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
     /** @var  string */
     protected $carrierCode;
     /** @var  string */
+    protected $carrierName;
+    /** @var  string */
     protected $shippingMethod;
     /** @var  string */
     protected $shipperTrackingNumber;
@@ -35,7 +37,7 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
      * AmazonOrderFulfillment constructor.
      * @param $amazonOrderID
      * @param $fulfillmentDate
-     * @param $carrierCode
+     * @param $carrierName
      * @param $shippingMethod
      * @param $shipperTrackingNumber
      * @param array $items
@@ -45,7 +47,7 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
     public function __construct(
         $amazonOrderID,
         $fulfillmentDate,
-        $carrierCode,
+        $carrierName,
         $shippingMethod,
         $shipperTrackingNumber,
         $merchantOrderID = null,
@@ -55,12 +57,11 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
         $this->amazonOrderID = $amazonOrderID;
         $this->items = $items;
         $this->fulfillmentDate = $fulfillmentDate;
-        $this->carrierCode = $carrierCode;
+        $this->carrierName = $carrierName;
         $this->shippingMethod = $shippingMethod;
         $this->shipperTrackingNumber = $shipperTrackingNumber;
         $this->merchantOrderID = $merchantOrderID;
         $this->merchantFulfillmentID = $merchantFulfillmentID;
-
     }
 
     public function addItem(
@@ -90,7 +91,7 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
         $rootNode->addChild('MerchantFulfillmentID', $this->merchantFulfillmentID());
         $rootNode->addChild('FulfillmentDate', $this->fulfillmentDate());
         $fulfillmentDate = $rootNode->addChild('FulfillmentData');
-        $fulfillmentDate->addChild('CarrierCode', $this->carrierCode());
+        $fulfillmentDate->addChild('CarrierName', $this->carrierName());
         $fulfillmentDate->addChild('ShippingMethod', $this->shippingMethod());
         $fulfillmentDate->addChild('ShipperTrackingNumber', $this->shipperTrackingNumber());
 
@@ -98,7 +99,7 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
             $ItemNode = $rootNode->addChild('Item');
             $ItemNode->addChild('AmazonOrderItemCode', $item->amazonOrderItemCode());
             // $ItemNode->addChild('MerchantOrderItemID', $item->merchantOrderItemID());
-            $ItemNode->addChild('MerchantFulfillmentItemID', $item->merchantFulfillmentItemID());
+//            $ItemNode->addChild('MerchantFulfillmentItemID', $item->merchantFulfillmentItemID());
             $ItemNode->addChild('Quantity', $item->quantity());
         }
 
@@ -183,6 +184,28 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
     public function setCarrierCode($carrierCode)
     {
         $this->carrierCode = $carrierCode;
+        return $this;
+    }
+
+    /**
+     * Get CarrierName
+     *
+     * @return string
+     */
+    public function carrierName()
+    {
+        return $this->carrierName;
+    }
+
+    /**
+     * @param string $carrierName
+     *
+     * @return AmazonOrderFulfillment
+     */
+    public function setCarrierName($carrierName)
+    {
+        $this->carrierName = $carrierName;
+
         return $this;
     }
 
