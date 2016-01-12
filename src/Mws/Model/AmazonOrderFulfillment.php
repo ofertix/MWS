@@ -34,49 +34,24 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
     protected $items;
 
     /**
-     * AmazonOrderFulfillment constructor.
      * @param $amazonOrderID
-     * @param $fulfillmentDate
      * @param $carrierName
      * @param $shippingMethod
      * @param $shipperTrackingNumber
      * @param array $items
-     * @param null $merchantOrderID
-     * @param null $merchantFulfillmentID
      */
     public function __construct(
         $amazonOrderID,
-        $fulfillmentDate,
         $carrierName,
         $shippingMethod,
         $shipperTrackingNumber,
-        $merchantOrderID = null,
-        $merchantFulfillmentID = null,
-        $items = []
+        $items = array()
     ) {
         $this->amazonOrderID = $amazonOrderID;
-        $this->items = $items;
-        $this->fulfillmentDate = $fulfillmentDate;
         $this->carrierName = $carrierName;
         $this->shippingMethod = $shippingMethod;
         $this->shipperTrackingNumber = $shipperTrackingNumber;
-        $this->merchantOrderID = $merchantOrderID;
-        $this->merchantFulfillmentID = $merchantFulfillmentID;
-    }
-
-    public function addItem(
-        $amazonOrderItemId,
-        $quantity,
-        $orderItemId,
-        $merchantFulfillmentItemID
-    ) {
-        $this->items[$orderItemId] = new AmazonOrderFulfillmentItem(
-            $amazonOrderItemId,
-            $quantity,
-            $orderItemId,
-            $merchantFulfillmentItemID
-        );
-
+        $this->fulfillmentDate = new \DateTime('now');
     }
 
 
@@ -87,9 +62,13 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
     {
         $rootNode = new \SimpleXMLElement('<'.$this->feedName().'></'.$this->feedName().'>');
         $rootNode->addChild('AmazonOrderID', $this->amazonOrderID());
-        //$rootNode->addChild('MerchantOrderID', $this->merchantOrderID());
-        $rootNode->addChild('MerchantFulfillmentID', $this->merchantFulfillmentID());
-        $rootNode->addChild('FulfillmentDate', $this->fulfillmentDate());
+        if ($this->merchantOrderID()!== null) {
+            $rootNode->addChild('MerchantOrderID', $this->merchantOrderID());
+        }
+        if ($this->merchantFulfillmentID()!== null) {
+            $rootNode->addChild('MerchantFulfillmentID', $this->merchantFulfillmentID());
+        }
+        $rootNode->addChild('FulfillmentDate', $this->fulfillmentDate()->format(\DateTime::W3C));
         $fulfillmentDate = $rootNode->addChild('FulfillmentData');
         $fulfillmentDate->addChild('CarrierName', $this->carrierName());
         $fulfillmentDate->addChild('ShippingMethod', $this->shippingMethod());
@@ -106,7 +85,6 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
         return $rootNode;
     }
 
-
     /**
      * Get AmazonOrderID
      *
@@ -118,12 +96,40 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
     }
 
     /**
+     * Set AmazonOrderID
+     *
      * @param string $amazonOrderID
+     *
      * @return AmazonOrderFulfillment
      */
     public function setAmazonOrderID($amazonOrderID)
     {
         $this->amazonOrderID = $amazonOrderID;
+
+        return $this;
+    }
+
+    /**
+     * Get MerchantOrderID
+     *
+     * @return string
+     */
+    public function merchantOrderID()
+    {
+        return $this->merchantOrderID;
+    }
+
+    /**
+     * Set MerchantOrderID
+     *
+     * @param string $merchantOrderID
+     *
+     * @return AmazonOrderFulfillment
+     */
+    public function setMerchantOrderID($merchantOrderID)
+    {
+        $this->merchantOrderID = $merchantOrderID;
+
         return $this;
     }
 
@@ -138,19 +144,23 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
     }
 
     /**
+     * Set MerchantFulfillmentID
+     *
      * @param string $merchantFulfillmentID
+     *
      * @return AmazonOrderFulfillment
      */
     public function setMerchantFulfillmentID($merchantFulfillmentID)
     {
         $this->merchantFulfillmentID = $merchantFulfillmentID;
+
         return $this;
     }
 
     /**
      * Get FulfillmentDate
      *
-     * @return datetime
+     * @return DateTime
      */
     public function fulfillmentDate()
     {
@@ -158,12 +168,16 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
     }
 
     /**
-     * @param datetime $fulfillmentDate
+     * Set FulfillmentDate
+     *
+     * @param DateTime $fulfillmentDate
+     *
      * @return AmazonOrderFulfillment
      */
     public function setFulfillmentDate($fulfillmentDate)
     {
         $this->fulfillmentDate = $fulfillmentDate;
+
         return $this;
     }
 
@@ -178,12 +192,16 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
     }
 
     /**
+     * Set CarrierCode
+     *
      * @param string $carrierCode
+     *
      * @return AmazonOrderFulfillment
      */
     public function setCarrierCode($carrierCode)
     {
         $this->carrierCode = $carrierCode;
+
         return $this;
     }
 
@@ -198,6 +216,8 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
     }
 
     /**
+     * Set CarrierName
+     *
      * @param string $carrierName
      *
      * @return AmazonOrderFulfillment
@@ -220,12 +240,16 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
     }
 
     /**
+     * Set ShippingMethod
+     *
      * @param string $shippingMethod
+     *
      * @return AmazonOrderFulfillment
      */
     public function setShippingMethod($shippingMethod)
     {
         $this->shippingMethod = $shippingMethod;
+
         return $this;
     }
 
@@ -240,19 +264,23 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
     }
 
     /**
+     * Set ShipperTrackingNumber
+     *
      * @param string $shipperTrackingNumber
+     *
      * @return AmazonOrderFulfillment
      */
     public function setShipperTrackingNumber($shipperTrackingNumber)
     {
         $this->shipperTrackingNumber = $shipperTrackingNumber;
+
         return $this;
     }
 
     /**
      * Get Items
      *
-     * @return mixed
+     * @return array
      */
     public function items()
     {
@@ -260,33 +288,16 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
     }
 
     /**
-     * @param mixed $items
-     * @return AmazonOrderFulfillment
-     */
-    public function setItems($items)
-    {
-        $this->items = $items;
-        return $this;
-    }
-
-    /**
-     * Get MerchantOrderID
+     * Add Item
      *
-     * @return string
+     * @param AmazonOrderFulfillmentItem $item
+     *
+     * @return $this
      */
-    public function merchantOrderID()
+    public function addItem(AmazonOrderFulfillmentItem $item)
     {
-        return $this->merchantOrderID;
-    }
+        $this->items[] = $item;
 
-    /**
-     * @param string $merchantOrderID
-     * @return AmazonOrderFulfillment
-     */
-    public function setMerchantOrderID($merchantOrderID)
-    {
-        $this->merchantOrderID = $merchantOrderID;
         return $this;
     }
-
 }
