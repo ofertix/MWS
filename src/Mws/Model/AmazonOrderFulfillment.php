@@ -68,7 +68,7 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
         if ($this->merchantFulfillmentID()!== null) {
             $rootNode->addChild('MerchantFulfillmentID', $this->merchantFulfillmentID());
         }
-        $rootNode->addChild('FulfillmentDate', $this->fulfillmentDate()->format(\DateTime::W3C));
+        $rootNode->addChild('FulfillmentDate', $this->fulfillmentDate());
         $fulfillmentDate = $rootNode->addChild('FulfillmentData');
         $fulfillmentDate->addChild('CarrierName', $this->carrierName());
         $fulfillmentDate->addChild('ShippingMethod', $this->shippingMethod());
@@ -164,7 +164,7 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
      */
     public function fulfillmentDate()
     {
-        return $this->fulfillmentDate;
+        return $this->fulfillmentDate->format(\DateTime::W3C);
     }
 
     /**
