@@ -516,12 +516,13 @@ HERE_DOC;
         }
 
         $amazonRequest = new $this->requestClass(
+            $responseMetadata->getRequestId(),
             $feedSubmissionInfo->getFeedSubmissionId(),
             $feedSubmissionInfo->getFeedType(),
             $feedSubmissionInfo->getSubmittedDate(),
-            $feedSubmissionInfo->getFeedProcessingStatus(),
-            $responseMetadata->getRequestId(),
-            $feedObj->saveXML()
+            $feedObj->saveXML(),
+            AmazonRequest::REQUEST_TYPE_FEED,
+            $feedSubmissionInfo->getFeedProcessingStatus()
         );
         return $amazonRequest;
     }
