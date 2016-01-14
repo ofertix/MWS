@@ -227,7 +227,7 @@ class FeedClient
             if ($amazonStock instanceof $this->stockClass) {
                 continue;
             }
-            throw new \Exception('ProductImage must be or extend \Ofertix\Mws\Model\AmazonStock');
+            throw new \Exception('Stock must be or extend \Ofertix\Mws\Model\AmazonStock');
         }
 
         /** @var \DOMDocument $xmlFeed */
@@ -260,7 +260,7 @@ class FeedClient
             if ($amazonPrice instanceof $this->priceClass) {
                 continue;
             }
-            throw new \Exception('ProductImage must be or extend \Ofertix\Mws\Model\AmazonPrice');
+            throw new \Exception('Price must be or extend \Ofertix\Mws\Model\AmazonPrice');
         }
 
         /** @var \DOMDocument $xmlFeed */
@@ -516,12 +516,13 @@ HERE_DOC;
         }
 
         $amazonRequest = new $this->requestClass(
+            $responseMetadata->getRequestId(),
             $feedSubmissionInfo->getFeedSubmissionId(),
             $feedSubmissionInfo->getFeedType(),
             $feedSubmissionInfo->getSubmittedDate(),
-            $feedSubmissionInfo->getFeedProcessingStatus(),
-            $responseMetadata->getRequestId(),
-            $feedObj->saveXML()
+            $feedObj->saveXML(),
+            AmazonRequest::REQUEST_TYPE_FEED,
+            $feedSubmissionInfo->getFeedProcessingStatus()
         );
         return $amazonRequest;
     }
@@ -558,7 +559,7 @@ HERE_DOC;
             if ($amazonOrder instanceof $this->orderFulfillmentClass) {
                 continue;
             }
-            throw new \Exception('ProductImage must be or extend \Ofertix\Mws\Model\AmazonOrderFulfillment');
+            throw new \Exception('OrderFulfillment must be or extend \Ofertix\Mws\Model\AmazonOrderFulfillment');
         }
 
         /** @var \DOMDocument $xmlFeed */

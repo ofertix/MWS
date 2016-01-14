@@ -4,24 +4,53 @@ namespace Ofertix\Mws\Model;
 
 class AmazonRequest
 {
-    protected $id;
-    protected $feedSubmissionId;
-    protected $feedType;
-    protected $submittedDate;
-    protected $status;
-    protected $requestId;
-    protected $startedProcessingDate;
-    protected $completedProcessingDate;
-    protected $xml;
 
-    public function __construct($feedSubmissionId, $feedType, $submittedDate, $status, $requestId, $xml)
+    const REQUEST_TYPE_LIST_ORDERS = "LIST_ORDERS";
+    const REQUEST_TYPE_LIST_ORDER_ITEMS = "LIST_ORDER_ITEMS";
+    const REQUEST_TYPE_FEED = "FEED";
+
+    /** @var  int */
+    protected $id;
+    /** @var int|null */
+    protected $feedSubmissionId;
+    /** @var null|string  */
+    protected $feedType;
+    /** @var \DateTime  */
+    protected $submittedDate;
+    /** @var null|string  */
+    protected $status;
+    /** @var null|string  */
+    protected $requestId;
+    /** @var  \Datetime */
+    protected $startedProcessingDate;
+    /** @var  \Datetime */
+    protected $completedProcessingDate;
+    /** @var null|string */
+    protected $xmlRequest;
+    /** @var  null|string */
+    protected $xmlResponse;
+    /** @var  \DateTime */
+    protected $createdAt;
+    /** @var string */
+    protected $requestType;
+
+    public function __construct(
+        $requestId,
+        $feedSubmissionId,
+        $feedType,
+        \Datetime $submittedDate,
+        $xmlRequest,
+        $requestType = null,
+        $status = null
+        )
     {
+        $this->requestType = $requestType;
+        $this->requestId = $requestId;
         $this->feedSubmissionId = $feedSubmissionId;
         $this->feedType = $feedType;
         $this->submittedDate = $submittedDate;
+        $this->xmlRequest = $xmlRequest;
         $this->status = $status;
-        $this->requestId = $requestId;
-        $this->xml = $xml;
     }
 
     /**
@@ -221,4 +250,101 @@ class AmazonRequest
 
         return $this;
     }
+
+    /**
+     * Get XmlRequest
+     *
+     * @return null|string
+     */
+    public function xmlRequest()
+    {
+        return $this->xmlRequest;
+    }
+
+    /**
+     * @param null|string $xmlRequest
+     *
+     * @return AmazonRequest
+     */
+    public function setXmlRequest($xmlRequest)
+    {
+        $this->xmlRequest = $xmlRequest;
+
+        return $this;
+    }
+
+    /**
+     * Get XmlResponse
+     *
+     * @return null|string
+     */
+    public function xmlResponse()
+    {
+        return $this->xmlResponse;
+    }
+
+    /**
+     * @param null|string $xmlResponse
+     *
+     * @return AmazonRequest
+     */
+    public function setXmlResponse($xmlResponse)
+    {
+        $this->xmlResponse = $xmlResponse;
+
+        return $this;
+    }
+
+    /**
+     * Get CreatedAt
+     *
+     * @return \DateTime
+     */
+    public function createdAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param \DateTime $createdAt
+     *
+     * @return AmazonRequest
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Get RequestType
+     *
+     * @return string
+     */
+    public function requestType()
+    {
+        return $this->requestType;
+    }
+
+    /**
+     * @param string $requestType
+     *
+     * @return AmazonRequest
+     */
+    public function setRequestType($requestType)
+    {
+        $this->requestType = $requestType;
+
+        return $this;
+    }
+
+    /**
+     * Hook que se llama antes de persistir
+     */
+    public function setCreatedAtValue()
+    {
+        $this->createdAt = new \DateTime();
+    }
+
 }
