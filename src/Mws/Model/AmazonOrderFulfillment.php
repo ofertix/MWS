@@ -158,9 +158,7 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
     }
 
     /**
-     * Get FulfillmentDate
-     *
-     * @return DateTime
+     * @return string
      */
     public function fulfillmentDate()
     {
@@ -168,11 +166,9 @@ class AmazonOrderFulfillment implements AmazonFeedTypeInterface
     }
 
     /**
-     * Set FulfillmentDate
+     * @param $fulfillmentDate
      *
-     * @param DateTime $fulfillmentDate
-     *
-     * @return AmazonOrderFulfillment
+     * @return $this
      */
     public function setFulfillmentDate($fulfillmentDate)
     {
