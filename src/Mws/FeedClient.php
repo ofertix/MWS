@@ -514,6 +514,7 @@ HERE_DOC;
                 $feedSubmissionInfo = $submitFeedResult->getFeedSubmissionInfo();
             }
         }
+        $headersMetadata = $response->getResponseHeaderMetadata();
 
         $amazonRequest = new $this->requestClass(
             $responseMetadata->getRequestId(),
@@ -522,8 +523,10 @@ HERE_DOC;
             $feedSubmissionInfo->getSubmittedDate(),
             $feedObj->saveXML(),
             AmazonRequest::REQUEST_TYPE_FEED,
-            $feedSubmissionInfo->getFeedProcessingStatus()
+            $feedSubmissionInfo->getFeedProcessingStatus(),
+            $headersMetadata->getQuotaRemaining()
         );
+
         return $amazonRequest;
     }
 

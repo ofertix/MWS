@@ -33,6 +33,8 @@ class AmazonRequest
     protected $createdAt;
     /** @var string */
     protected $requestType;
+    /** @var integer */
+    protected $remainingQuota;
 
     public function __construct(
         $requestId,
@@ -41,8 +43,9 @@ class AmazonRequest
         \Datetime $submittedDate,
         $xmlRequest,
         $requestType = null,
-        $status = null
-        )
+        $status = null,
+        $remainingQuota = null
+    )
     {
         $this->requestType = $requestType;
         $this->requestId = $requestId;
@@ -51,6 +54,7 @@ class AmazonRequest
         $this->submittedDate = $submittedDate;
         $this->xmlRequest = $xmlRequest;
         $this->status = $status;
+        $this->remainingQuota = $remainingQuota;
     }
 
     /**
@@ -345,6 +349,26 @@ class AmazonRequest
     public function setCreatedAtValue()
     {
         $this->createdAt = new \DateTime();
+    }
+
+    /**
+     * Get RemainingQuota
+     *
+     * @return int
+     */
+    public function remainingQuota()
+    {
+        return $this->remainingQuota;
+    }
+
+    /**
+     * @param int $remainingQuota
+     * @return AmazonRequest
+     */
+    public function setRemainingQuota($remainingQuota)
+    {
+        $this->remainingQuota = $remainingQuota;
+        return $this;
     }
 
 }
