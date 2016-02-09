@@ -452,16 +452,8 @@ HERE_DOC;
 
         /** @var  $request  \MarketplaceWebService_Model_SubmitFeedRequest */
         $request = self::getSubmitFeedRequest($feed, $marketPlaceId, $feedType->feedType());
-
-        try{
-            $response = $this->client->submitFeed($request);
-
-            return $response;
-        } catch(\Exception $ex) {
-            //ToDO: process exceptions
-            var_dump($ex);
-            die('** Error! **');
-        }
+        $response = $this->client->submitFeed($request);
+        return $response;
 
     }
 
