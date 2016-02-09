@@ -32,6 +32,8 @@ class AmazonRequest
     /** @var  \DateTime */
     protected $createdAt;
     /** @var string */
+    protected $updatedAt;
+    /** @var string */
     protected $requestType;
     /** @var integer */
     protected $remainingQuota;
@@ -368,6 +370,26 @@ class AmazonRequest
     public function setRemainingQuota($remainingQuota)
     {
         $this->remainingQuota = $remainingQuota;
+        return $this;
+    }
+
+    /**
+     * Get UpdatedAt
+     *
+     * @return string
+     */
+    public function updatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param string $updatedAt
+     * @return AmazonRequest
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
         return $this;
     }
 
