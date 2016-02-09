@@ -42,9 +42,10 @@ class FeedClient extends MarketplaceWebService_Client
             $parsedHeader['x-mws-request-id'],
             $parsedHeader['x-mws-response-context'],
             $parsedHeader['x-mws-timestamp'],
-            $parsedHeader['x-mws-quota-max'],
-            $parsedHeader['x-mws-quota-remaining'],
-            $parsedHeader['x-mws-quota-resetson']);
+            (isset($parsedHeader['x-mws-quota-max'])) ? $parsedHeader['x-mws-quota-max']: null,
+            (isset($parsedHeader['x-mws-quota-remaining'])) ? $parsedHeader['x-mws-quota-remaining']: null,
+            (isset($parsedHeader['x-mws-quota-resetson'])) ? $parsedHeader['x-mws-quota-resetson']: null
+        );
 
         $code = (int) curl_getinfo($this->curlClient, CURLINFO_HTTP_CODE);
 
