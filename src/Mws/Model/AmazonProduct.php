@@ -35,6 +35,7 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
     protected $parentSku;
     protected $launchDate;
     protected $category;
+    protected $clothingType;
 
     /**
      * @var Image[]
@@ -84,7 +85,7 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
         //        if (isset($this->amazonProduct['recommended_browse_node'])) {
         //            $descNode->addChild('RecommendedBrowseNode', $this->amazonProduct['recommended_browse_node']);
         //        }
-        $productDataNode = $this->createProducDataNode($rootNode);
+        //$productDataNode = $this->createProducDataNode($rootNode);
 
         return $rootNode;
 
@@ -574,111 +575,180 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
     }
 
     /**
-     * @param $rootNode
+     * Get ClothingType
      *
      * @return mixed
      */
+    public function clothingType()
+    {
+        return $this->clothingType;
+    }
+
+    /**
+     * @param mixed $clothingType
+     *
+     * @return AmazonProduct
+     */
+    public function setClothingType($clothingType)
+    {
+        $this->clothingType = $clothingType;
+
+        return $this;
+    }
+
+    /**
+     * @param $rootNode
+     *
+     * @return mixed
+     * ToDo: implement generation of this product category type
+     */
     protected function createProducDataNode($rootNode)
     {
+
         if ($this->category() == 'Clothing') {
-            $productDataNode = $this->createClothingNode($rootNode);
-        } elseif ($this->category() == 'ClothingAccessories') {
 
-        } elseif ($this->category() == 'Miscellaneous') {
-
-        } elseif ($this->category() == 'CameraPhoto') {
-
-        } elseif ($this->category() == 'Home') {
-
-        } elseif ($this->category() == 'Sports') {
-
-        } elseif ($this->category() == 'SportsMemorabilia') {
-
-        } elseif ($this->category() == 'EntertainmentCollectibles') {
-
-        } elseif ($this->category() == 'HomeImprovement') {
-
-        } elseif ($this->category() == 'Tools') {
-
-        } elseif ($this->category() == 'FoodAndBeverages') {
-
-        } elseif ($this->category() == 'Gourmet') {
-
-        } elseif ($this->category() == 'Jewelry') {
-
-        } elseif ($this->category() == 'Health') {
-
-        } elseif ($this->category() == 'CE') {
-
-        } elseif ($this->category() == 'Computers') {
-
-        } elseif ($this->category() == 'SoftwareVideoGames') {
-
-        } elseif ($this->category() == 'Wireless') {
-
-        } elseif ($this->category() == 'Beauty') {
-
-        } elseif ($this->category() == 'Office') {
-
-        } elseif ($this->category() == 'MusicalInstruments') {
-
-        } elseif ($this->category() == 'AutoAccessory') {
-
-        } elseif ($this->category() == 'PetSupplies') {
-
-        } elseif ($this->category() == 'ToysBaby') {
-
-        } elseif ($this->category() == 'Baby') {
-
-        } elseif ($this->category() == 'TiresAndWheels') {
-
-        } elseif ($this->category() == 'Music') {
-
-        } elseif ($this->category() == 'Video') {
-
-        } elseif ($this->category() == 'Lighting') {
-
-        } elseif ($this->category() == 'LargeAppliances') {
-
-        } elseif ($this->category() == 'FBA') {
-
-        } elseif ($this->category() == 'Toys') {
-
-        } elseif ($this->category() == 'GiftCard') {
-
-        } elseif ($this->category() == 'LabSupplies') {
-
-        } elseif ($this->category() == 'RawMaterials') {
-
-        } elseif ($this->category() == 'PowerTransmission') {
-
-        } elseif ($this->category() == 'Industrial') {
-
-        } elseif ($this->category() == 'Shoes') {
-
-        } elseif ($this->category() == 'Motorcycles') {
-
-        } elseif ($this->category() == 'MechanicalFasteners') {
-
-        } elseif ($this->category() == 'FoodServiceAndJanSan') {
-
-        } elseif ($this->category() == 'WineAndAlcohol') {
-
-        } elseif ($this->category() == 'EUCompliance') {
-
-        } elseif ($this->category() == 'Books') {
-
-        } elseif ($this->category() == 'AdditionalProductInformation') {
-
-        } elseif ($this->category() == 'Arts') {
-
-        } elseif ($this->category() == 'Luggage') {
-
-        } else {
-
+            return $this->createClothingNode($rootNode);
         }
 
-        return $productDataNode;
+        if ($this->category() == 'ClothingAccessories') {
+        }
+
+        if ($this->category() == 'Miscellaneous') {
+        }
+
+        if ($this->category() == 'CameraPhoto') {
+        }
+
+        if ($this->category() == 'Home') {
+        }
+
+        if ($this->category() == 'Sports') {
+        }
+
+        if ($this->category() == 'SportsMemorabilia') {
+        }
+
+        if ($this->category() == 'EntertainmentCollectibles') {
+        }
+
+        if ($this->category() == 'HomeImprovement') {
+        }
+
+        if ($this->category() == 'Tools') {
+        }
+
+        if ($this->category() == 'FoodAndBeverages') {
+        }
+
+        if ($this->category() == 'Gourmet') {
+        }
+
+        if ($this->category() == 'Jewelry') {
+        }
+
+        if ($this->category() == 'Health') {
+        }
+
+        if ($this->category() == 'CE') {
+        }
+
+        if ($this->category() == 'Computers') {
+        }
+
+        if ($this->category() == 'SoftwareVideoGames') {
+        }
+
+        if ($this->category() == 'Wireless') {
+        }
+
+        if ($this->category() == 'Beauty') {
+        }
+
+        if ($this->category() == 'Office') {
+        }
+
+        if ($this->category() == 'MusicalInstruments') {
+        }
+
+        if ($this->category() == 'AutoAccessory') {
+        }
+
+        if ($this->category() == 'PetSupplies') {
+        }
+
+        if ($this->category() == 'ToysBaby') {
+        }
+
+        if ($this->category() == 'Baby') {
+        }
+
+        if ($this->category() == 'TiresAndWheels') {
+        }
+
+        if ($this->category() == 'Music') {
+        }
+
+        if ($this->category() == 'Video') {
+        }
+
+        if ($this->category() == 'Lighting') {
+        }
+
+        if ($this->category() == 'LargeAppliances') {
+        }
+
+        if ($this->category() == 'FBA') {
+        }
+
+        if ($this->category() == 'Toys') {
+        }
+
+        if ($this->category() == 'GiftCard') {
+        }
+
+        if ($this->category() == 'LabSupplies') {
+        }
+
+        if ($this->category() == 'RawMaterials') {
+        }
+
+        if ($this->category() == 'PowerTransmission') {
+        }
+
+        if ($this->category() == 'Industrial') {
+        }
+
+        if ($this->category() == 'Shoes') {
+        }
+
+        if ($this->category() == 'Motorcycles') {
+        }
+
+        if ($this->category() == 'MechanicalFasteners') {
+        }
+
+        if ($this->category() == 'FoodServiceAndJanSan') {
+        }
+
+        if ($this->category() == 'WineAndAlcohol') {
+        }
+
+        if ($this->category() == 'EUCompliance') {
+        }
+
+        if ($this->category() == 'Books') {
+        }
+
+        if ($this->category() == 'AdditionalProductInformation') {
+        }
+
+        if ($this->category() == 'Arts') {
+        }
+
+        if ($this->category() == 'Luggage') {
+        }
+
+        return null;
     }
 
     protected function createClothingNode($rootNode)
@@ -689,12 +759,13 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
                     $variationDataNode->addChild('Size', $this->size());
                     $variationDataNode->addChild('Color', $this->color());
             $classificationDataNode = $productDataCategoryNode->addChild('ClassificationData');
-                $classificationDataNode->addChild('ClothingType');
+                $classificationDataNode->addChild('ClothingType', $this->clothingType());
                 $classificationDataNode->addChild('Department');
                 $classificationDataNode->addChild('MaterialComposition');
                 $classificationDataNode->addChild('OuterMaterial');
 
         return $productDataNode;
     }
+
 
 }
