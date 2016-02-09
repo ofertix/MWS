@@ -569,7 +569,7 @@ HERE_DOC;
         $xmlFeed = $this->createXmlFeed($amazonOrders);
 
         /** @var  \MarketplaceWebService_Model_SubmitFeedResponse $response */
-        $response = $this->submitFeed($xmlFeed, $marketPlaceId, array_pop($amazonOrders));
+        $response = $this->submitFeed($xmlFeed, $marketPlaceId, $amazonOrder);
 
         $this->handleThrottling($response);
         /** @var AmazonRequest $amazonRequest */
