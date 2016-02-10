@@ -85,7 +85,7 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
         //        if (isset($this->amazonProduct['recommended_browse_node'])) {
         //            $descNode->addChild('RecommendedBrowseNode', $this->amazonProduct['recommended_browse_node']);
         //        }
-        //$productDataNode = $this->createProducDataNode($rootNode);
+        $this->createProducDataNode($rootNode);
 
         return $rootNode;
 
@@ -760,9 +760,9 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
                     $variationDataNode->addChild('Color', $this->color());
             $classificationDataNode = $productDataCategoryNode->addChild('ClassificationData');
                 $classificationDataNode->addChild('ClothingType', $this->clothingType());
-                $classificationDataNode->addChild('Department');
-                $classificationDataNode->addChild('MaterialComposition');
-                $classificationDataNode->addChild('OuterMaterial');
+                $classificationDataNode->addChild('Department', $this->category());
+                $classificationDataNode->addChild('MaterialComposition', $this->moreInfo());
+                $classificationDataNode->addChild('OuterMaterial', $this->moreInfo());
 
         return $productDataNode;
     }
