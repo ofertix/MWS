@@ -9,6 +9,7 @@ namespace Ofertix\Mws\Model;
  */
 class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterface
 {
+
     use AmazonFeedTypeTrait;
     const FEED_NAME = 'product';
 
@@ -36,6 +37,7 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
     protected $launchDate;
     protected $category;
     protected $clothingType;
+    protected $department;
 
     /**
      * @var Image[]
@@ -760,12 +762,27 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
                     $variationDataNode->addChild('Color', $this->color());
             $classificationDataNode = $productDataCategoryNode->addChild('ClassificationData');
                 $classificationDataNode->addChild('ClothingType', $this->clothingType());
-                $classificationDataNode->addChild('Department', $this->category());
+                $classificationDataNode->addChild('Department', $this->department());
                 $classificationDataNode->addChild('MaterialComposition', $this->moreInfo());
                 $classificationDataNode->addChild('OuterMaterial', $this->moreInfo());
 
         return $productDataNode;
     }
 
+    /**
+     * @return string
+     */
+    private function department()
+    {
+        return $this->department();
+    }
 
+    /**
+     * The correspondent Node Path from Amazon's Browse Tree Guides (BTGs)
+     * @param string $department
+     */
+    public function setDepartment($department)
+    {
+        $this->department = $department;
+    }
 }
