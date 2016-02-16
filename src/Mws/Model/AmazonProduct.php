@@ -87,7 +87,7 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
         //        if (isset($this->amazonProduct['recommended_browse_node'])) {
         //            $descNode->addChild('RecommendedBrowseNode', $this->amazonProduct['recommended_browse_node']);
         //        }
-        $this->createProducDataNode($rootNode);
+        //$this->createProducDataNode($rootNode);
 
         return $rootNode;
 
