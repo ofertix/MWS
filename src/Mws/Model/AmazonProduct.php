@@ -87,7 +87,7 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
         //        if (isset($this->amazonProduct['recommended_browse_node'])) {
         //            $descNode->addChild('RecommendedBrowseNode', $this->amazonProduct['recommended_browse_node']);
         //        }
-        //$this->createProducDataNode($rootNode);
+        $this->createProductDataNode($rootNode);
 
         return $rootNode;
 
@@ -604,7 +604,7 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
      * @return mixed
      * ToDo: implement generation of this product category type
      */
-    protected function createProducDataNode($rootNode)
+    protected function createProductDataNode($rootNode)
     {
 
         if ($this->category() == 'Clothing') {
@@ -755,18 +755,20 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
 
     protected function createClothingNode($rootNode)
     {
-        $productDataNode = $rootNode->addChild('ProductData');
+        if ($this->department() != null) {
+            $productDataNode = $rootNode->addChild('ProductData');
             $productDataCategoryNode = $productDataNode->addChild('Clothing');
-                $variationDataNode = $productDataCategoryNode->addChild('VariationData');
-                    $variationDataNode->addChild('Size', $this->size());
-                    $variationDataNode->addChild('Color', $this->color());
-            $classificationDataNode = $productDataCategoryNode->addChild('ClassificationData');
-                $classificationDataNode->addChild('ClothingType', $this->clothingType());
-                $classificationDataNode->addChild('Department', $this->department());
-                $classificationDataNode->addChild('MaterialComposition', $this->moreInfo());
-                $classificationDataNode->addChild('OuterMaterial', $this->moreInfo());
+            $variationDataNode = $productDataCategoryNode->addChild('VariationData');
+            $variationDataNode->addChild('Size', $this->size());
+            $variationDataNode->addChild('Color', $this->color());
 
-        return $productDataNode;
+            $classificationDataNode = $productDataCategoryNode->addChild('ClassificationData');
+            $classificationDataNode->addChild('ClothingType', $this->clothingType());
+            $classificationDataNode->addChild('Department', $this->department());
+            $classificationDataNode->addChild('MaterialComposition', $this->moreInfo());
+            $classificationDataNode->addChild('OuterMaterial', $this->moreInfo());
+            return $productDataNode;
+        }
     }
 
     /**
@@ -774,7 +776,7 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
      */
     private function department()
     {
-        return $this->department();
+        return $this->department;
     }
 
     /**
