@@ -602,7 +602,6 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
      * @param $rootNode
      *
      * @return mixed
-     * ToDo: implement generation of this product category type
      */
     protected function createProductDataNode($rootNode)
     {
@@ -610,6 +609,14 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
         if ($this->category() == 'Clothing') {
 
             return $this->createClothingNode($rootNode);
+        }
+
+        if ($this->category() == 'Shoes') {
+            return $this->createShoesNode($rootNode);
+        }
+
+        if ($this->category() == 'Sports') {
+            return $this->createSportsNode($rootNode);
         }
 
         if ($this->category() == 'ClothingAccessories') {
@@ -622,9 +629,6 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
         }
 
         if ($this->category() == 'Home') {
-        }
-
-        if ($this->category() == 'Sports') {
         }
 
         if ($this->category() == 'SportsMemorabilia') {
@@ -720,9 +724,6 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
         if ($this->category() == 'Industrial') {
         }
 
-        if ($this->category() == 'Shoes') {
-        }
-
         if ($this->category() == 'Motorcycles') {
         }
 
@@ -753,7 +754,12 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
         return null;
     }
 
-    protected function createClothingNode($rootNode)
+    /**
+     * Ropa
+     * @param \SimpleXMLElement $rootNode
+     * @return \SimpleXMLElement|null
+     */
+    private function createClothingNode(\SimpleXMLElement $rootNode)
     {
         if ($this->department() != null) {
             $productDataNode = $rootNode->addChild('ProductData');
@@ -767,6 +773,70 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
             $classificationDataNode->addChild('Department', $this->department());
             $classificationDataNode->addChild('MaterialComposition', $this->moreInfo());
             $classificationDataNode->addChild('OuterMaterial', $this->moreInfo());
+
+            return $productDataNode;
+        }
+
+        return null;
+    }
+
+    /**
+     * Crea nodo de zapatos
+     * @param \SimpleXMLElement $rootNode
+     * @return mixed
+     */
+    protected function createShoesNode(\SimpleXMLElement $rootNode)
+    {
+        if ($this->department()) {
+            $productDataNode = $rootNode->addChild('ProductData');
+            $productDataCategoryNode = $productDataNode->addChild('Shoes');
+
+            $productDataCategoryNode->addChild('ClothingType', $this->clothingType());
+
+            if ($this->size() || $this->color()) {
+                $variationDataNode = $productDataCategoryNode->addChild('VariationData');
+
+                if ($this->size()) {
+                    $variationDataNode->addChild('Size', $this->size());
+                }
+                if ($this->color()) {
+                    $variationDataNode->addChild('Color', $this->color());
+                }
+            }
+
+            $classificationDataNode = $productDataCategoryNode->addChild('ClassificationData');
+            $classificationDataNode->addChild('Department', $this->department());
+            $classificationDataNode->addChild('MaterialComposition', $this->moreInfo());
+
+            return $productDataNode;
+        }
+    }
+
+    /**
+     * Deportes
+     * @param \SimpleXMLElement $rootNode
+     * @return \SimpleXMLElement
+     */
+    private function createSportsNode(\SimpleXMLElement $rootNode)
+    {
+        if ($this->department()) {
+            $productDataNode = $rootNode->addChild('ProductData');
+            $productDataCategoryNode = $productDataNode->addChild('Sports');
+
+            $productDataCategoryNode->addChild('ProductType', $this->clothingType());
+
+            $variationDataNode = $productDataCategoryNode->addChild('VariationData');
+
+            if ($this->size()) {
+                $variationDataNode->addChild('Size', $this->size());
+            }
+            if ($this->color()) {
+                $variationDataNode->addChild('Color', $this->color());
+            }
+
+            $variationDataNode->addChild('Department', $this->department());
+            $productDataCategoryNode->addChild('MaterialComposition', $this->moreInfo());
+
             return $productDataNode;
         }
     }
