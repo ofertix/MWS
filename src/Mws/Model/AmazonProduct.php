@@ -38,6 +38,7 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
     protected $category;
     protected $clothingType;
     protected $department;
+    protected $nodeId;
 
     /**
      * @var Image[]
@@ -75,18 +76,16 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
         $conditionNode = $rootNode->addChild('Condition');
         $conditionNode->addChild('ConditionType', 'New');
         $descNode = $rootNode->addChild('DescriptionData');
-        $descNode->addChild('Title', $this->title());
-        $descNode->addChild('Brand', $this->brand());
-        $descNode->addChild('Description', $this->description());
+        $descNode->addChild('Title', $this->xmlEscape($this->title()));
+        $descNode->addChild('Brand', $this->xmlEscape($this->brand()));
+        $descNode->addChild('Description', $this->xmlEscape($this->description()));
         //        if (isset($this->amazonProduct['search_terms'])) {
         //            foreach ($this->amazonProduct['search_terms'] as $searchTerm) {
         //                $descNode->addChild('SearchTerms', $searchTerm);
         //            }
         //        }
         $descNode->addChild('ItemType', 'flat-sheets');
-        //        if (isset($this->amazonProduct['recommended_browse_node'])) {
-        //            $descNode->addChild('RecommendedBrowseNode', $this->amazonProduct['recommended_browse_node']);
-        //        }
+        $descNode->addChild('RecommendedBrowseNode', $this->nodeId);
         $this->createProductDataNode($rootNode);
 
         return $rootNode;
@@ -599,6 +598,17 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
     }
 
     /**
+     * @param int $nodeId
+     * @return $this
+     */
+    public function setNodeId($nodeId)
+    {
+        $this->nodeId = $nodeId;
+
+        return $this;
+    }
+
+    /**
      * @param $rootNode
      *
      * @return mixed
@@ -765,14 +775,14 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
             $productDataNode = $rootNode->addChild('ProductData');
             $productDataCategoryNode = $productDataNode->addChild('Clothing');
             $variationDataNode = $productDataCategoryNode->addChild('VariationData');
-            $variationDataNode->addChild('Size', $this->size());
-            $variationDataNode->addChild('Color', $this->color());
+            $variationDataNode->addChild('Size', $this->xmlEscape($this->size()));
+            $variationDataNode->addChild('Color', $this->xmlEscape($this->color()));
 
             $classificationDataNode = $productDataCategoryNode->addChild('ClassificationData');
             $classificationDataNode->addChild('ClothingType', $this->clothingType());
-            $classificationDataNode->addChild('Department', $this->department());
-            $classificationDataNode->addChild('MaterialComposition', $this->moreInfo());
-            $classificationDataNode->addChild('OuterMaterial', $this->moreInfo());
+            $classificationDataNode->addChild('Department', $this->xmlEscape($this->department()));
+            $classificationDataNode->addChild('MaterialComposition', $this->xmlEscape($this->moreInfo()));
+            $classificationDataNode->addChild('OuterMaterial', $this->xmlEscape($this->moreInfo()));
 
             return $productDataNode;
         }
@@ -797,16 +807,16 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
                 $variationDataNode = $productDataCategoryNode->addChild('VariationData');
 
                 if ($this->size()) {
-                    $variationDataNode->addChild('Size', $this->size());
+                    $variationDataNode->addChild('Size', $this->xmlEscape($this->size()));
                 }
                 if ($this->color()) {
-                    $variationDataNode->addChild('Color', $this->color());
+                    $variationDataNode->addChild('Color', $this->xmlEscape($this->color()));
                 }
             }
 
             $classificationDataNode = $productDataCategoryNode->addChild('ClassificationData');
-            $classificationDataNode->addChild('Department', $this->department());
-            $classificationDataNode->addChild('MaterialComposition', $this->moreInfo());
+            $classificationDataNode->addChild('Department', $this->xmlEscape($this->department()));
+            $classificationDataNode->addChild('MaterialComposition', $this->xmlEscape($this->moreInfo()));
 
             return $productDataNode;
         }
@@ -827,15 +837,17 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
 
             $variationDataNode = $productDataCategoryNode->addChild('VariationData');
 
-            if ($this->size()) {
-                $variationDataNode->addChild('Size', $this->size());
-            }
             if ($this->color()) {
-                $variationDataNode->addChild('Color', $this->color());
+                $variationDataNode->addChild('Color', $this->xmlEscape($this->color()));
             }
 
-            $variationDataNode->addChild('Department', $this->department());
-            $productDataCategoryNode->addChild('MaterialComposition', $this->moreInfo());
+            $variationDataNode->addChild('Department', $this->xmlEscape($this->department()));
+
+            if ($this->size()) {
+                $variationDataNode->addChild('Size', $this->xmlEscape($this->size()));
+            }
+
+            $productDataCategoryNode->addChild('MaterialComposition', $this->xmlEscape($this->moreInfo()));
 
             return $productDataNode;
         }
@@ -852,9 +864,22 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
     /**
      * The correspondent Node Path from Amazon's Browse Tree Guides (BTGs)
      * @param string $department
+     * @return $this
      */
     public function setDepartment($department)
     {
         $this->department = $department;
+
+        return $this;
+    }
+
+    /**
+     * Escapa el XML
+     * @param string $string
+     * @return string
+     */
+    private function xmlEscape($string)
+    {
+        return htmlspecialchars($string, ENT_XML1);
     }
 }
