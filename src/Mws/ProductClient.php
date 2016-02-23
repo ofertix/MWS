@@ -50,7 +50,7 @@ class ProductClient
             //$requestId = $headersMetadata->getRequestId();
             //$resetsAt = $headersMetadata->getQuotaResetsAt();
             while ($quotaRemaining <1) {
-                echo 'Has been reached the limit of requests. Waiting 5 minutes to continue...';
+                echo 'ProductClient: Has been reached the limit of requests. Waiting 5 minutes to continue... '.'QuotaRemaining: '.$quotaRemaining;
                 sleep(5*60);
             }
             if (is_object($response)) {

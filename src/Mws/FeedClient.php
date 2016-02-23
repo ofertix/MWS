@@ -536,7 +536,7 @@ HERE_DOC;
         //$requestId = $headersMetadata->getRequestId();
         //$resetsAt = $headersMetadata->getQuotaResetsAt();
         while ($quotaRemaining < 1) {
-            echo 'Has been reached the limit of requests. Waiting 5 minutes to continue...';
+            echo 'FeedClient: Has been reached the limit of requests. Waiting 5 minutes to continue... '.'QuotaRemaining: '.$quotaRemaining;
             sleep(5 * 60);
         }
     }
