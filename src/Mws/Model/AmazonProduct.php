@@ -761,7 +761,7 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
      */
     private function createClothingNode(\SimpleXMLElement $rootNode)
     {
-        if ($this->department() != null) {
+        if ($this->department() !== null) {
             $productDataNode = $rootNode->addChild('ProductData');
             $productDataCategoryNode = $productDataNode->addChild('Clothing');
             $variationDataNode = $productDataCategoryNode->addChild('VariationData');
@@ -787,7 +787,7 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
      */
     protected function createShoesNode(\SimpleXMLElement $rootNode)
     {
-        if ($this->department()) {
+        if ($this->department() !== null) {
             $productDataNode = $rootNode->addChild('ProductData');
             $productDataCategoryNode = $productDataNode->addChild('Shoes');
 
@@ -819,7 +819,7 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
      */
     private function createSportsNode(\SimpleXMLElement $rootNode)
     {
-        if ($this->department()) {
+        if ($this->department() !== null) {
             $productDataNode = $rootNode->addChild('ProductData');
             $productDataCategoryNode = $productDataNode->addChild('Sports');
 
