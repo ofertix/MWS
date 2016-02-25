@@ -85,7 +85,9 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
         //            }
         //        }
         $descNode->addChild('ItemType', 'flat-sheets');
-        $descNode->addChild('RecommendedBrowseNode', $this->nodeId);
+        if (!empty($this->nodeId)) {
+            $descNode->addChild('RecommendedBrowseNode', $this->nodeId);
+        }
         $this->createProductDataNode($rootNode);
 
         return $rootNode;
