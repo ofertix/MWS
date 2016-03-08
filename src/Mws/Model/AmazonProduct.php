@@ -33,12 +33,12 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
     protected $description;
     protected $moreInfo;
     protected $currency;
-    protected $parentSku;
     protected $launchDate;
     protected $category;
     protected $clothingType;
     protected $department;
     protected $nodeId;
+    protected $isParent;
 
     /**
      * @var Image[]
@@ -48,15 +48,17 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
     /**
      * AmazonProduct constructor.
      * @param Ean13 $ean13
-     * @param string  $brand
-     * @param string  $title
+     * @param $brand
+     * @param $title
+     * @param bool $parent
      */
-    public function __construct(Ean13 $ean13, $brand, $title)
+    public function __construct(Ean13 $ean13, $brand, $title, $parent = false)
     {
         $this->ean13 = $ean13;
         $this->brand = $brand;
         $this->title = $title;
         $this->images = array();
+        $this->isParent = $parent;
     }
 
 
@@ -79,11 +81,7 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
         $descNode->addChild('Title', $this->xmlEscape($this->title()));
         $descNode->addChild('Brand', $this->xmlEscape($this->brand()));
         $descNode->addChild('Description', $this->xmlEscape($this->description()));
-        //        if (isset($this->amazonProduct['search_terms'])) {
-        //            foreach ($this->amazonProduct['search_terms'] as $searchTerm) {
-        //                $descNode->addChild('SearchTerms', $searchTerm);
-        //            }
-        //        }
+
         $descNode->addChild('ItemType', 'flat-sheets');
         if (!empty($this->nodeId)) {
             $descNode->addChild('RecommendedBrowseNode', $this->nodeId);
@@ -512,28 +510,6 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
     }
 
     /**
-     * Get ParentSku
-     *
-     * @return mixed
-     */
-    public function parentSku()
-    {
-        return $this->parentSku;
-    }
-
-    /**
-     * @param mixed $parentSku
-     *
-     * @return AmazonProduct
-     */
-    public function setParentSku($parentSku)
-    {
-        $this->parentSku = $parentSku;
-
-        return $this;
-    }
-
-    /**
      * Get LaunchDate
      *
      * @return mixed
@@ -776,9 +752,7 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
         if ($this->department() !== null) {
             $productDataNode = $rootNode->addChild('ProductData');
             $productDataCategoryNode = $productDataNode->addChild('Clothing');
-            $variationDataNode = $productDataCategoryNode->addChild('VariationData');
-            $variationDataNode->addChild('Size', $this->xmlEscape($this->size()));
-            $variationDataNode->addChild('Color', $this->xmlEscape($this->color()));
+            $this->createVariationDataNode($productDataCategoryNode);
 
             $classificationDataNode = $productDataCategoryNode->addChild('ClassificationData');
             $classificationDataNode->addChild('ClothingType', $this->clothingType());
@@ -790,6 +764,25 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
         }
 
         return null;
+    }
+
+    /**
+     * @param \SimpleXMLElement $productDataCategoryNode
+     * @return \SimpleXMLElement
+     */
+    private function createVariationDataNode(\SimpleXMLElement $productDataCategoryNode)
+    {
+        $variationDataNode = $productDataCategoryNode->addChild('VariationData');
+
+        if ($this->isParent) {
+            $variationDataNode->addChild('Parentage', 'parent');
+            $variationDataNode->addChild('VariationTheme', 'Size');
+        } else {
+            $variationDataNode->addChild('Size', $this->xmlEscape($this->size()));
+            $variationDataNode->addChild('Color', $this->xmlEscape($this->color()));
+        }
+
+        return $variationDataNode;
     }
 
     /**
