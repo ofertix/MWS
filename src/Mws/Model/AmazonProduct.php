@@ -57,7 +57,7 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
         $this->ean13 = $ean13;
         $this->brand = $brand;
         $this->title = $title;
-        $this->images = array();
+        $this->images = [];
         $this->isParent = $parent;
     }
 
