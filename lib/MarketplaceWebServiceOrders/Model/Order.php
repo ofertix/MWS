@@ -909,6 +909,7 @@ require_once (dirname(__FILE__) . '/../Model.php');
      * Get the value of the BuyerName property.
      *
      * @return String BuyerName.
+     * @deprecated Debe de usarse getShippingAddress()->name()
      */
     public function getBuyerName()
     {
