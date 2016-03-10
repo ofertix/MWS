@@ -757,8 +757,10 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
             $classificationDataNode = $productDataCategoryNode->addChild('ClassificationData');
             $classificationDataNode->addChild('ClothingType', $this->clothingType());
             $classificationDataNode->addChild('Department', $this->xmlEscape($this->department()));
-            $classificationDataNode->addChild('MaterialComposition', $this->xmlEscape($this->moreInfo()));
-            $classificationDataNode->addChild('OuterMaterial', $this->xmlEscape($this->moreInfo()));
+            $classificationDataNode->addChild('MaterialComposition', substr(
+                $this->xmlEscape($this->moreInfo()), 0, 1000
+            ));
+            $classificationDataNode->addChild('OuterMaterial', substr($this->xmlEscape($this->moreInfo()), 0, 500));
 
             return $productDataNode;
         }
@@ -811,7 +813,9 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
 
             $classificationDataNode = $productDataCategoryNode->addChild('ClassificationData');
             $classificationDataNode->addChild('Department', $this->xmlEscape($this->department()));
-            $classificationDataNode->addChild('MaterialComposition', $this->xmlEscape($this->moreInfo()));
+            $classificationDataNode->addChild('MaterialComposition', substr(
+                $this->xmlEscape($this->moreInfo()), 0, 500
+            ));
 
             return $productDataNode;
         }
@@ -842,7 +846,9 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
                 $variationDataNode->addChild('Size', $this->xmlEscape($this->size()));
             }
 
-            $productDataCategoryNode->addChild('MaterialComposition', $this->xmlEscape($this->moreInfo()));
+            $productDataCategoryNode->addChild('MaterialComposition', substr(
+                $this->xmlEscape($this->moreInfo()), 0, 500
+            ));
 
             return $productDataNode;
         }
