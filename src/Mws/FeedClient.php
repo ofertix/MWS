@@ -28,6 +28,7 @@ class FeedClient
     private $client;
     private $requestClass;
     private $productClass;
+    private $relationshipClass;
     private $orderFulfillmentClass;
     private $orderAcknowledgementClass;
 
@@ -39,6 +40,8 @@ class FeedClient
             $config['amazon_request_class'] : '\Ofertix\Mws\Model\AmazonRequest';
         $this->productClass = isset($config['amazon_product_class']) ?
             $config['amazon_product_class'] : '\Ofertix\Mws\Model\AmazonProduct';
+        $this->relationshipClass = isset($config['amazon_product_class']) ?
+            $config['amazon_relationship_class'] : '\Ofertix\Mws\Model\AmazonRelationship';
         $this->imageClass = isset($config['amazon_image_class']) ?
             $config['amazon_image_class'] : '\Ofertix\Mws\Model\AmazonProductImage';
         $this->stockClass = isset($config['amazon_stock_class']) ?
@@ -170,6 +173,31 @@ class FeedClient
 
         /** @var  \MarketplaceWebService_Model_SubmitFeedResponse $response */
         $response = $this->submitFeed($xmlFeed, $marketPlaceId, $amazonProduct);
+
+        $this->handleThrottling($response);
+        /** @var AmazonRequest $amazonRequest */
+        $amazonRequest = $this->getRequestData($response, $xmlFeed);
+
+        return $amazonRequest;
+    }
+
+    public function createRelationships($amazonRelationships, $marketPlaceId = 'default')
+    {
+        $marketPlaceId = $marketPlaceId === 'default' ? $this->config['marketplace_id'] : $marketPlaceId;
+
+        foreach ($amazonRelationships as $relationship) {
+            if ($relationship instanceof $this->relationshipClass) {
+                continue;
+            }
+
+            throw new \Exception('Relationships must be or extend \Ofertix\Mws\Model\AmazonRelationship');
+        }
+
+        /** @var \DOMDocument $xmlFeed */
+        $xmlFeed = $this->createXmlFeed($amazonRelationships);
+
+        /** @var  \MarketplaceWebService_Model_SubmitFeedResponse $response */
+        $response = $this->submitFeed($xmlFeed, $marketPlaceId, $relationship);
 
         $this->handleThrottling($response);
         /** @var AmazonRequest $amazonRequest */
