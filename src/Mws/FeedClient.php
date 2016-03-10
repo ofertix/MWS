@@ -186,11 +186,9 @@ class FeedClient
         $marketPlaceId = $marketPlaceId === 'default' ? $this->config['marketplace_id'] : $marketPlaceId;
 
         foreach ($amazonRelationships as $relationship) {
-            if ($relationship instanceof $this->relationshipClass) {
-                continue;
+            if (!($relationship instanceof $this->relationshipClass)) {
+                throw new \Exception('Relationships must be or extend \Ofertix\Mws\Model\AmazonRelationship');
             }
-
-            throw new \Exception('Relationships must be or extend \Ofertix\Mws\Model\AmazonRelationship');
         }
 
         /** @var \DOMDocument $xmlFeed */
