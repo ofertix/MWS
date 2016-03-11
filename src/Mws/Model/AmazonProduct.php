@@ -11,7 +11,11 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
 {
 
     use AmazonFeedTypeTrait;
+
     const FEED_NAME = 'product';
+    const DEFAULT_LIFESTYLE = 'casual';
+    const DEFAULT_STYLE_NAME = 'moderno';
+    const DEFAULT_ITEM_LENGTH_DESCRIPTION = 'midi';
 
     protected $id;
     /** @var Ean13  */
@@ -39,6 +43,9 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
     protected $department;
     protected $nodeId;
     protected $isParent;
+    protected $lifeStyle;
+    protected $styleName;
+    protected $itemLengthDescription;
 
     /**
      * @var Image[]
@@ -757,10 +764,16 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
             $classificationDataNode = $productDataCategoryNode->addChild('ClassificationData');
             $classificationDataNode->addChild('ClothingType', $this->clothingType());
             $classificationDataNode->addChild('Department', $this->xmlEscape($this->department()));
+            $classificationDataNode->addChild('ColorMap', $this->xmlEscape($this->color()));
             $classificationDataNode->addChild('MaterialComposition', substr(
                 $this->xmlEscape($this->moreInfo()), 0, 1000
             ));
             $classificationDataNode->addChild('OuterMaterial', substr($this->xmlEscape($this->moreInfo()), 0, 500));
+            $classificationDataNode->addChild('OccasionAndLifestyle', $this->xmlEscape($this->lifeStyle()));
+            $classificationDataNode->addChild('StyleName', $this->styleName());
+            $classificationDataNode->addChild('SizeMap', $this->size());
+
+            $productDataCategoryNode->addChild('ItemLengthDescription', $this->itemLengthDescription());
 
             return $productDataNode;
         }
@@ -882,5 +895,68 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
     private function xmlEscape($string)
     {
         return htmlspecialchars($string, ENT_XML1);
+    }
+
+    /**
+     * Get LifeStyle
+     *
+     * @return string
+     */
+    public function lifeStyle()
+    {
+        return $this->lifeStyle ?: static::DEFAULT_LIFESTYLE;
+    }
+
+    /**
+     * @param string $lifeStyle
+     * @return $this
+     */
+    public function setLifeStyle($lifeStyle)
+    {
+        $this->lifeStyle = $lifeStyle;
+
+        return $this;
+    }
+
+    /**
+     * Get StyleName
+     *
+     * @return string
+     */
+    public function styleName()
+    {
+        return $this->styleName ?: static::DEFAULT_STYLE_NAME;
+    }
+
+    /**
+     * @param string $styleName
+     * @return $this
+     */
+    public function setStyleName($styleName)
+    {
+        $this->styleName = $styleName;
+
+        return $this;
+    }
+
+    /**
+     * Get ItemLengthDescription
+     *
+     * @return string
+     */
+    public function itemLengthDescription()
+    {
+        return $this->itemLengthDescription ?: static::DEFAULT_ITEM_LENGTH_DESCRIPTION;
+    }
+
+    /**
+     * @param string $itemLengthDescription
+     * @return $this
+     */
+    public function setItemLengthDescription($itemLengthDescription)
+    {
+        $this->itemLengthDescription = $itemLengthDescription;
+
+        return $this;
     }
 }
