@@ -40,7 +40,7 @@ class FeedClient
             $config['amazon_request_class'] : '\Ofertix\Mws\Model\AmazonRequest';
         $this->productClass = isset($config['amazon_product_class']) ?
             $config['amazon_product_class'] : '\Ofertix\Mws\Model\AmazonProduct';
-        $this->relationshipClass = isset($config['amazon_product_class']) ?
+        $this->relationshipClass = isset($config['amazon_relationship_class']) ?
             $config['amazon_relationship_class'] : '\Ofertix\Mws\Model\AmazonRelationship';
         $this->imageClass = isset($config['amazon_image_class']) ?
             $config['amazon_image_class'] : '\Ofertix\Mws\Model\AmazonProductImage';
