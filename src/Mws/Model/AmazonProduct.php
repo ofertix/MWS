@@ -782,25 +782,6 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
     }
 
     /**
-     * @param \SimpleXMLElement $productDataCategoryNode
-     * @return \SimpleXMLElement
-     */
-    private function createVariationDataNode(\SimpleXMLElement $productDataCategoryNode)
-    {
-        $variationDataNode = $productDataCategoryNode->addChild('VariationData');
-
-        if ($this->isParent) {
-            $variationDataNode->addChild('Parentage', 'parent');
-            $variationDataNode->addChild('VariationTheme', 'Size');
-        } else {
-            $variationDataNode->addChild('Size', $this->xmlEscape($this->size()));
-            $variationDataNode->addChild('Color', $this->xmlEscape($this->color()));
-        }
-
-        return $variationDataNode;
-    }
-
-    /**
      * Crea nodo de zapatos
      * @param \SimpleXMLElement $rootNode
      * @return mixed
@@ -813,16 +794,7 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
 
             $productDataCategoryNode->addChild('ClothingType', $this->clothingType());
 
-            if ($this->size() || $this->color()) {
-                $variationDataNode = $productDataCategoryNode->addChild('VariationData');
-
-                if ($this->size()) {
-                    $variationDataNode->addChild('Size', $this->xmlEscape($this->size()));
-                }
-                if ($this->color()) {
-                    $variationDataNode->addChild('Color', $this->xmlEscape($this->color()));
-                }
-            }
+            $this->createVariationDataNode($productDataCategoryNode);
 
             $classificationDataNode = $productDataCategoryNode->addChild('ClassificationData');
             $classificationDataNode->addChild('Department', $this->xmlEscape($this->department()));
@@ -832,6 +804,8 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
 
             return $productDataNode;
         }
+
+        return null;
     }
 
     /**
@@ -847,17 +821,7 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
 
             $productDataCategoryNode->addChild('ProductType', $this->clothingType());
 
-            $variationDataNode = $productDataCategoryNode->addChild('VariationData');
-
-            if ($this->color()) {
-                $variationDataNode->addChild('Color', $this->xmlEscape($this->color()));
-            }
-
-            $variationDataNode->addChild('Department', $this->xmlEscape($this->department()));
-
-            if ($this->size()) {
-                $variationDataNode->addChild('Size', $this->xmlEscape($this->size()));
-            }
+            $this->createVariationDataNode($productDataCategoryNode, true);
 
             $productDataCategoryNode->addChild('MaterialComposition', substr(
                 $this->xmlEscape($this->moreInfo()), 0, 500
@@ -865,6 +829,37 @@ class AmazonProduct implements UploadableProductInterface, AmazonFeedTypeInterfa
 
             return $productDataNode;
         }
+
+        return null;
+    }
+
+    /**
+     * @param \SimpleXMLElement $productDataCategoryNode
+     * @param bool $withDepartment
+     * @return \SimpleXMLElement
+     */
+    private function createVariationDataNode(\SimpleXMLElement $productDataCategoryNode, $withDepartment = false)
+    {
+        $variationDataNode = $productDataCategoryNode->addChild('VariationData');
+
+        if ($this->isParent) {
+            $variationDataNode->addChild('Parentage', 'parent');
+            $variationDataNode->addChild('VariationTheme', 'Size');
+        } else {
+            if ($this->size()) {
+                $variationDataNode->addChild('Size', $this->xmlEscape($this->size()));
+            }
+
+            if ($withDepartment) {
+                $variationDataNode->addChild('Department', $this->xmlEscape($this->department()));
+            }
+
+            if ($this->color()) {
+                $variationDataNode->addChild('Color', $this->xmlEscape($this->color()));
+            }
+        }
+
+        return $variationDataNode;
     }
 
     /**
