@@ -9,7 +9,8 @@ namespace Ofertix\Mws;
 class AmazonMock
 {
 
-    public $basedir;
+    protected $basedir;
+    protected $postHooks;
 
     public function __construct($feedType, $basedir = null)
     {
@@ -23,7 +24,52 @@ class AmazonMock
         $className = $this->baseClassName . $baseName;
         $path = $this->basedir . '/Mock/' . $baseName . '.xml';
         $xml = file_get_contents($path);
+        if (array_key_exists($method, $this->postHooks)) {
+            $postHook = $this->postHooks[$method];
+            $xml = (is_callable($postHook)) ? $postHook($xml) : $xml;
+        }
         return $className::fromXML($xml);
     }
 
+    /**
+     * Get Basedir
+     *
+     * @return null|string
+     */
+    public function basedir()
+    {
+        return $this->basedir;
+    }
+
+    /**
+     * @param null|string $basedir
+     * @return AmazonMock
+     */
+    public function setBasedir($basedir)
+    {
+        $this->basedir = $basedir;
+        return $this;
+    }
+
+    /**
+     * Get PostHooks
+     *
+     * @return mixed
+     */
+    public function postHooks()
+    {
+        return $this->postHooks;
+    }
+
+    /**
+     * @param mixed $postHooks
+     * @return AmazonMock
+     */
+    public function setPostHooks($postHooks)
+    {
+        $this->postHooks = $postHooks;
+        return $this;
+    }
+
 }
+

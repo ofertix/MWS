@@ -625,5 +625,26 @@ HERE_DOC;
         return $amazonRequest;
     }
 
+    /**
+     * Get amazon report by id
+     * @param $feedReportId
+     * @return bool|string
+     */
+    public function getReport($feedReportId){
 
+        if ($feedReportId > 0) {
+            $request = new \MarketplaceWebService_Model_GetReportRequest();
+            $request->setMerchant($this->config['merchant_id']);
+            $request->setReportId($feedReportId);
+            $handle = @fopen('php://memory', 'rw+');
+            $request->setReport($handle);
+            $this->client->getReport($request);
+            rewind($handle);
+
+            return stream_get_contents($handle);
+        } else {
+            return false;
+        }
+
+    }
 }
