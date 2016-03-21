@@ -24,11 +24,15 @@ class AmazonMock
         $className = $this->baseClassName . $baseName;
         $path = $this->basedir . '/Mock/' . $baseName . '.xml';
         $xml = file_get_contents($path);
-        if (array_key_exists($method, $this->postHooks)) {
+
+        if (array_key_exists($method, $this->postHooks) && $xml !== false) {
             $postHook = $this->postHooks[$method];
-            $xml = (is_callable($postHook)) ? $postHook($xml) : $xml;
+            return (is_callable($postHook)) ?
+                $postHook($xml, $className) : $className::fromXML($xml);
+        } else {
+            return;
         }
-        return $className::fromXML($xml);
+
     }
 
     /**
