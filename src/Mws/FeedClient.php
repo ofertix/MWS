@@ -647,4 +647,26 @@ HERE_DOC;
         }
 
     }
+
+
+    /**
+     * Get Client
+     *
+     * @return bool|\FBAInventoryServiceMWS_Client|\FeedClient|\MarketplaceWebServiceOrders_Client|\MarketplaceWebServiceProducts_Client
+     */
+    public function client()
+    {
+        return $this->client;
+    }
+
+    /**
+     * @param bool|\FBAInventoryServiceMWS_Client|\FeedClient|\MarketplaceWebServiceOrders_Client|\MarketplaceWebServiceProducts_Client $client
+     * @return FeedClient
+     */
+    public function setClient($client)
+    {
+        $this->client = $client;
+        return $this;
+    }
+
 }
