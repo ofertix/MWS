@@ -24,11 +24,20 @@ class AmazonMock
         $className = $this->baseClassName . $baseName;
         $path = $this->basedir . '/Mock/' . $baseName . '.xml';
         $xml = file_get_contents($path);
+        $responseHeaderMetadata = new \ResponseHeaderMetadata(
+            'requestId',
+            'responseContext',
+            'timestamp',
+            '30',
+            '30'
+        );
 
         if (array_key_exists($method, $this->postHooks) && $xml !== false) {
             $postHook = $this->postHooks[$method];
-            return (is_callable($postHook)) ?
-                $postHook($xml, $className) : $className::fromXML($xml);
+            $xml = (is_callable($postHook)) ? $postHook($xml) : $xml;
+            $objResponse = $className::fromXML($xml);
+            $objResponse->setResponseHeaderMetadata($responseHeaderMetadata);
+            return $objResponse;
         } else {
             return;
         }
