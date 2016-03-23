@@ -220,12 +220,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "fe33716763b604ade4cb442c0794f5bd5ad73004"
+                "reference": "9b2a050b8ee982bf4132fa5c8b381f33c7416f2b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/fe33716763b604ade4cb442c0794f5bd5ad73004",
-                "reference": "fe33716763b604ade4cb442c0794f5bd5ad73004",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/9b2a050b8ee982bf4132fa5c8b381f33c7416f2b",
+                "reference": "9b2a050b8ee982bf4132fa5c8b381f33c7416f2b",
                 "shasum": ""
             },
             "require": {
@@ -275,7 +275,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-03-03 08:49:08"
+            "time": "2016-03-09 13:32:21"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -461,12 +461,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "37fa29b17b87a3e9f0a4d77c42f0aac5183b84d1"
+                "reference": "6f0948bab32270352f97d1913d82a49338dcb0da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/37fa29b17b87a3e9f0a4d77c42f0aac5183b84d1",
-                "reference": "37fa29b17b87a3e9f0a4d77c42f0aac5183b84d1",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/6f0948bab32270352f97d1913d82a49338dcb0da",
+                "reference": "6f0948bab32270352f97d1913d82a49338dcb0da",
                 "shasum": ""
             },
             "require": {
@@ -527,7 +527,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-03-03 08:52:58"
+            "time": "2016-03-15 05:59:58"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -535,12 +535,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-                "reference": "aaf40b8e9cc03426a442bf0d2b09d41ac00736f0"
+                "reference": "0a6d198af94d02956f2eb8bd59d5ab3166dc85da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/aaf40b8e9cc03426a442bf0d2b09d41ac00736f0",
-                "reference": "aaf40b8e9cc03426a442bf0d2b09d41ac00736f0",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/0a6d198af94d02956f2eb8bd59d5ab3166dc85da",
+                "reference": "0a6d198af94d02956f2eb8bd59d5ab3166dc85da",
                 "shasum": ""
             },
             "require": {
@@ -583,7 +583,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2016-03-04 08:02:21"
+            "time": "2016-03-09 13:33:49"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -1058,12 +1058,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "801d412451594f7c9e7950a016a377798cf9dfa0"
+                "reference": "38aebd1045f91caaf25db0164e2703b21fb5359d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/801d412451594f7c9e7950a016a377798cf9dfa0",
-                "reference": "801d412451594f7c9e7950a016a377798cf9dfa0",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/38aebd1045f91caaf25db0164e2703b21fb5359d",
+                "reference": "38aebd1045f91caaf25db0164e2703b21fb5359d",
                 "shasum": ""
             },
             "require": {
@@ -1099,7 +1099,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-03-04 07:56:56"
+            "time": "2016-03-10 14:06:18"
         }
     ],
     "packages-dev": [],
