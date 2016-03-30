@@ -650,6 +650,45 @@ HERE_DOC;
 
 
     /**
+     * Delete products on Amazon by array of SKUS
+     * @param $skuArr
+     * @return bool|\MarketplaceWebService_Model_SubmitFeedResponse
+     */
+    public function deleteSKU(array $skuArr)
+    {
+        if ($skuArr > 0) {
+            $feedTypeString = 'Product';
+            $baseFeed = $this->getMWSBaseFeed($feedTypeString);
+            $i=1;
+            foreach ($skuArr as $skuString) {
+                $messageNodeXml = $this->getMessageNode($i, self::OPERATION_TYPE_DELETE);
+                $deleteNode = new \SimpleXMLElement("<$feedTypeString></$feedTypeString>");
+                $deleteNode->addChild('SKU', $skuString);
+                $domMessageNode = $messageNodeXml->importNode(dom_import_simplexml($deleteNode), true);
+                $messageNodeXml->documentElement->appendChild($domMessageNode);
+                $domMessageFeed = $baseFeed->importNode($messageNodeXml->documentElement, true);
+                $baseFeed->documentElement->appendChild($domMessageFeed);
+                $i++;
+
+            }
+            /** @var  \MarketplaceWebService_Model_SubmitFeedResponse $response */
+            $request = self::getSubmitFeedRequest(
+                $baseFeed,
+                $this->getConfig('marketplace_id'),
+                self::$feedTypes[$feedTypeString]
+            );
+            $response = $this->client()->submitFeed($request);
+            /** @var AmazonRequest $amazonRequest */
+            $amazonRequest = $this->getRequestData($response, $baseFeed);
+            $amazonRequest->setRequestType('DELETE FEED');
+            return $amazonRequest;
+        } else {
+            return false;
+        }
+
+    }
+
+    /**
      * Get Client
      *
      * @return bool|\FBAInventoryServiceMWS_Client|\FeedClient|\MarketplaceWebServiceOrders_Client|\MarketplaceWebServiceProducts_Client
