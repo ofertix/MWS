@@ -7,11 +7,11 @@ class ResponseHeaderMetadata extends MarketplaceWebService_Model_ResponseHeaderM
     const QUOTA_RESETS_AT = 'x-mws-quota-resetsOn';
 
     public function __construct($requestId = null, $responseContext = null, $timestamp = null,
-        $quotaMax = null, $quotaMax = null, $quotaResetsAt = null) {
+        $quotaMax = null, $remaining = null, $quotaResetsAt = null) {
         parent::__construct();
 
         $this->metadata[self::QUOTA_MAX] = $quotaMax;
-        $this->metadata[self::QUOTA_REMAINING] = $quotaMax;
+        $this->metadata[self::QUOTA_REMAINING] = $remaining;
         $this->metadata[self::QUOTA_RESETS_AT] = $quotaResetsAt;
     }
 
